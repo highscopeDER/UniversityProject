@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <group android:id="@+id/buildingMenu">
+
+        <item
+            android:id="@+id/floor1"
+            android:title="Этаж 1"
+            />
+
+        <item
+            android:id="@+id/floor2"
+            android:title="Этаж 2"
+            />
+
+        <item
+            android:id="@+id/floor3"
+            android:title="Этаж 3"
+            />
+
+        <item
+            android:id="@+id/floor4"
+            android:title="Этаж 4"
+            />
+
+        <item
+            android:id="@+id/floor5"
+            android:title="Этаж 5"
+            />
+
+    </group>
+
+</menu>
