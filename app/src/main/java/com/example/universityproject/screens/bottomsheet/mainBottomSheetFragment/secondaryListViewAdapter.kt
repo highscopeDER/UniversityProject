@@ -1,4 +1,4 @@
-package com.example.universityproject
+package com.example.universityproject.screens.bottomsheet.mainBottomSheetFragment
 
 import android.view.LayoutInflater
 import android.view.View
@@ -6,7 +6,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.universityproject.databinding.SecondaryListViewItemBinding
 
-class SecondaryListViewAdapter(private val data: Array<Pair<String, String>>) : RecyclerView.Adapter<SecondaryListViewAdapter.ViewHolder>() {
+class SecondListViewAdapter(private val data: Array<Pair<String, String>>)
+    : RecyclerView.Adapter<SecondListViewAdapter.ViewHolder>() {
 
     private lateinit var binding: SecondaryListViewItemBinding
 

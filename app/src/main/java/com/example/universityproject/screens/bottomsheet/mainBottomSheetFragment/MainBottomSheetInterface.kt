@@ -1,6 +1,6 @@
-package com.example.universityproject
+package com.example.universityproject.screens.bottomsheet.mainBottomSheetFragment
 
-interface BottomSheetInterface {
+interface MainBottomSheetInterface {
 
     var startPoint: String?
     var endPoint: String?

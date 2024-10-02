@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".screens.fragments.RouteViewerFragment">
+
+   <androidx.constraintlayout.widget.ConstraintLayout
+       android:layout_width="match_parent"
+       android:layout_height="match_parent">
+
+
+      <com.example.universityproject.screens.map.MapView
+          android:id="@+id/mapView"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:scaleType="centerCrop"
+          />
+
+      <com.mazenrashed.dotsindicator.DotsIndicator
+          android:id="@+id/indicator"
+          android:layout_width="match_parent"
+          android:layout_height="48dp"
+          android:layout_marginBottom="16dp"
+          app:layout_constraintBottom_toBottomOf="parent"
+          app:dot_height="24dp"
+          app:dot_width="24dp"
+          app:first_dot_height="24dp"
+          app:first_dot_width="24dp"
+          app:selected_dot_scale_factor="1.5"
+          app:selected_dot_resource="@drawable/dot_selected"
+          app:unselected_dot_resource="@drawable/dot_unselected"
+          app:first_selected_dot_resource="@drawable/dot_selected"
+          app:first_unselected_dot_resource="@drawable/dot_unselected"
+
+          />
+
+      <Button
+          android:id="@+id/backButton"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          app:layout_constraintTop_toTopOf="parent"
+          app:layout_constraintStart_toStartOf="parent"
+          android:layout_margin="24dp"
+          android:text="Back"
+          android:textSize="18sp"
+          />
+
+      <Button
+          android:id="@+id/nextStepButton"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          app:layout_constraintBottom_toBottomOf="parent"
+          app:layout_constraintEnd_toEndOf="parent"
+          android:layout_margin="16dp"
+          android:text="Next"
+          android:textSize="18sp"
+          />
+
+
+
+
+
+   </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+
+
+
+
+</FrameLayout>

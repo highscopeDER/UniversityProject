@@ -1,4 +1,4 @@
-package com.example.universityproject
+package com.example.universityproject.screens
 
 data class MapPoint(
     val x: Float,

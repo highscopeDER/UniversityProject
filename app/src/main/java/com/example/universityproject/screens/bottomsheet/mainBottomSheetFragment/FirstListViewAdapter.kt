@@ -1,4 +1,4 @@
-package com.example.universityproject
+package com.example.universityproject.screens.bottomsheet.mainBottomSheetFragment
 
 import android.view.LayoutInflater
 import android.view.View
@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.universityproject.databinding.MainListViewItemBinding
 
-class MainListViewAdapter(private val data: List<String>, val l: MainListViewAdapterInterface) : RecyclerView.Adapter<MainListViewAdapter.ViewHolder>() {
+class FirstListViewAdapter(private val data: List<String>, val l: MainListViewAdapterInterface) : RecyclerView.Adapter<FirstListViewAdapter.ViewHolder>() {
 
     private lateinit var binding: MainListViewItemBinding
 
@@ -23,7 +23,7 @@ class MainListViewAdapter(private val data: List<String>, val l: MainListViewAda
 
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainListViewAdapter.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         binding = MainListViewItemBinding.inflate(
             LayoutInflater.from(parent.context),
             parent,

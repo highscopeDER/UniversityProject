@@ -12,8 +12,9 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+
+        maven { url 'https://jitpack.io' }
     }
 }
 rootProject.name = "UniversityProject"
 include ':app'
-include ':touchview'
