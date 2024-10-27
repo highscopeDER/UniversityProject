@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <TextView
+        android:id="@+id/tv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="AAAA"
+        android:textSize="26sp"
+        android:gravity="center_horizontal"
+        android:layout_marginBottom="56dp"
+        />
+
+    <Button
+        android:id="@+id/toStart"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+
+        android:text="to start"
+
+        app:layout_constraintTop_toBottomOf="@id/tv"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/toEnd"
+        app:layout_constraintWidth_percent="0.3"
+
+        />
+
+    <Button
+        android:id="@+id/toEnd"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+
+        android:text="to end"
+
+        app:layout_constraintWidth_percent="0.3"
+        app:layout_constraintTop_toBottomOf="@id/tv"
+        app:layout_constraintStart_toEndOf="@id/toStart"
+        app:layout_constraintEnd_toEndOf="parent"
+
+        />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

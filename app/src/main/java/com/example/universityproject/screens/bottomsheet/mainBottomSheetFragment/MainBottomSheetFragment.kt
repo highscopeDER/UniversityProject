@@ -7,9 +7,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.universityproject.api.API.Companion.dbApi
 import com.example.universityproject.databinding.BottomSheetFragmentBinding
+import com.example.universityproject.screens.fragments.MainFragment
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
-class MainBottomSheetFragment(private val code: Int, private val ins: MainBottomSheetInterface) : BottomSheetDialogFragment(),
+class MainBottomSheetFragment(private val code: Int, private val parent: MainBottomSheetInterface) : BottomSheetDialogFragment(),
     FirstListViewAdapter.MainListViewAdapterInterface {
 
     private lateinit var binding: BottomSheetFragmentBinding
@@ -56,10 +57,12 @@ class MainBottomSheetFragment(private val code: Int, private val ins: MainBottom
 
     override fun onClick(desc: String) {
 
-        if (code == MainBottomSheetInterface.selectionType.START) ins.startPoint = desc
-        else ins.endPoint = desc
 
-        ins.updateUI()
+
+        if (code == MainBottomSheetInterface.selectionType.START) parent.startPoint = desc
+        else parent.endPoint = desc
+
+        parent.updateUI()
 
         dismiss()
     }

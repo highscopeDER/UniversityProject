@@ -3,17 +3,14 @@ package com.example.universityproject.route
 import android.content.res.Resources
 import android.graphics.BitmapFactory
 import android.graphics.Color
-import android.graphics.Matrix
 import android.graphics.Paint
 import android.graphics.Path
-import android.util.Log
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.applyCanvas
 import androidx.core.graphics.drawable.toBitmap
-import androidx.core.graphics.drawable.toDrawable
 import com.example.universityproject.dijkstra.Dijkstra
 import com.example.universityproject.dijkstra.PointPosition
-import com.example.universityproject.screens.Floors
+import com.example.universityproject.model.Floors
 
 class RouteBuilder {
 

@@ -1,7 +1,9 @@
 package com.example.universityproject.dijkstra
 
-data class Graph<T>(
-    val vertices: Set<T>,
-    val edges: Map<T, Set<T>>,
-    val weights: Map<Pair<T, T>, Int>
+import kotlin.reflect.typeOf
+
+data class Graph<String>(
+    val vertices: Set<String>,
+    val edges: Map<String, List<String>>,
+    val weights: Map<Pair<String, String>, Float>
 )

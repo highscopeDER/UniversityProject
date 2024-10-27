@@ -1,8 +1,8 @@
 package com.example.universityproject.screens.activities
 
 import android.annotation.SuppressLint
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.universityproject.api.API.Companion.dbApi
 import com.example.universityproject.databinding.ActivityMainBinding
@@ -13,7 +13,7 @@ import com.google.android.material.internal.EdgeToEdgeUtils.applyEdgeToEdge
 
 class MainActivity : AppCompatActivity(), RouteViewer {
 
-    private lateinit var mapViewerFragment: MainFragment
+    //private lateinit var mapViewerFragment: MainFragment
     private lateinit var binding: ActivityMainBinding
     private val fmanager = supportFragmentManager
 
@@ -26,10 +26,20 @@ class MainActivity : AppCompatActivity(), RouteViewer {
 
         dbApi.initialize()
         RouteBuilder.resources = resources
+       // MainFragment.newInstance(this)
+        fmanager.beginTransaction().apply {
+            replace(
+                binding.fragmentContainer.id,
+                MainFragment(this@MainActivity),
+                null
+            )
+            setReorderingAllowed(true)
+            addToBackStack(null)
+            commit()
+        }
+       // mapViewerFragment = MainFragment.mainFragInstance
 
-        mapViewerFragment = MainFragment.newInstance(this)
-
-        useFragment(mapViewerFragment)
+        //useFragment(MainFragment.mainFragInstance)
 
     }
 
@@ -41,13 +51,18 @@ class MainActivity : AppCompatActivity(), RouteViewer {
     }
 
     override fun showRouteFragment(fragment: RouteViewerFragment) {
-        useFragment(fragment)
+        fmanager.beginTransaction()
+            .replace(binding.fragmentContainer.id, fragment, null)
+            .addToBackStack("main")
+            .commit()
+        //useFragment(fragment)
     }
 
     override fun backToMain() {
-        useFragment(mapViewerFragment)
-        mapViewerFragment.clearInput()
-    }
+       // useFragment(MainFragment.mainFragInstance)
+        //MainFragment.mainFragInstance.clearInput()
+        fmanager.popBackStack()
 
+    }
 
 }

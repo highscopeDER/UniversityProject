@@ -2,33 +2,28 @@ package com.example.universityproject.screens.fragments
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.example.universityproject.R
 import com.example.universityproject.databinding.FragmentMainBinding
-import com.example.universityproject.screens.Floors
 import com.example.universityproject.route.RouteBuilder
+import com.example.universityproject.model.Floors
 import com.example.universityproject.screens.activities.RouteViewer
 import com.example.universityproject.screens.bottomsheet.mainBottomSheetFragment.MainBottomSheetFragment
 import com.example.universityproject.screens.bottomsheet.mainBottomSheetFragment.MainBottomSheetInterface
-import com.example.universityproject.screens.map.MapView
-import com.ortiz.touchview.TouchImageView
 
-class MainFragment(private val routeViewer: RouteViewer) : Fragment(), MainBottomSheetInterface {
+class MainFragment(private val routeViewer: RouteViewer) : Fragment(), MainBottomSheetInterface{
 
     private lateinit var binding: FragmentMainBinding
 
-    private var currentFloor: Int = 1
-
     override var startPoint: String? = null
     override var endPoint: String? = null
-
-    private lateinit var mapView: MapView
 
     private lateinit var fmanager: FragmentManager
 
@@ -39,7 +34,15 @@ class MainFragment(private val routeViewer: RouteViewer) : Fragment(), MainBotto
         binding = FragmentMainBinding.inflate(layoutInflater)
         // Inflate the layout for this fragment
         fmanager = requireActivity().supportFragmentManager
+        binding.touchImageView.fragment = this
+
         return binding.root
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        startPoint = null
+        endPoint = null
     }
 
     override fun updateUI() {
@@ -54,10 +57,13 @@ class MainFragment(private val routeViewer: RouteViewer) : Fragment(), MainBotto
                     RouteBuilder.buildRoute(startPoint!!, endPoint!!)
                 )
             )
+
+            Log.d("TAG", "WTFFF")
+
         }
     }
 
-    fun clearInput(){
+    private fun clearInput(){
         startPoint = null
         endPoint = null
         updateUI()
@@ -71,8 +77,7 @@ class MainFragment(private val routeViewer: RouteViewer) : Fragment(), MainBotto
             it.isActivated = !it.isActivated
         }
 
-         mapView = binding.touchImageView
-            .apply {
+         binding.touchImageView.apply {
                 minZoom = 0.1f
                 maxZoom = 5f
                 setZoom(0.2f)
@@ -94,8 +99,20 @@ class MainFragment(private val routeViewer: RouteViewer) : Fragment(), MainBotto
             }
         }
 
+        binding.touchImageView.setOnTouchListener { _, event ->
 
-        val menuOnClick: View.OnClickListener = View.OnClickListener { showPopupMenu(binding.menuView.dropDownIcon, binding.root) }
+            if (event.action != MotionEvent.ACTION_MOVE && event.action != MotionEvent.ACTION_UP) {
+                Log.d(
+                    "TAG",
+                    "x, y - ${event.x}, ${event.y}"
+                )
+                binding.touchImageView.checkClick(event.x, event.y)
+            }
+
+            true
+        }
+
+        val menuOnClick: View.OnClickListener = View.OnClickListener { showPopupMenu(binding.menuView.dropDownIcon) }
 
         binding.menuView
             .apply {
@@ -105,56 +122,53 @@ class MainFragment(private val routeViewer: RouteViewer) : Fragment(), MainBotto
             }
     }
 
-    private fun showPopupMenu(anchor: View?, view: View) {
+    override fun onPause() {
+        super.onPause()
+        clearInput()
+    }
 
-        val imgView: TouchImageView = view.findViewById(R.id.touchImageView)
-        val floorTextView: TextView = view.findViewById(R.id.textViewFloor)
-        val buildingTextView: TextView = view.findViewById(R.id.textViewBuilding)
+    private fun showPopupMenu(anchor: View?) {
 
         PopupMenu(this.requireContext(), anchor)
                 .apply {
                     inflate(R.menu.popup_menu)
                     setOnMenuItemClickListener { item ->
-                        val floorNum: Int =
-                        when (item.itemId) {
-                            R.id.floor1 -> {
-                                imgView.setImageResource(Floors.FLOOR_1.res)
-                                floorTextView.text = "Этаж 1"
-                                1
+                        val floor: Floors =
+                        when (item) {
+                            this.menu.findItem(R.id.floor1) -> {
+                                binding.menuView.textViewFloor.text = "Этаж 1"
+                                Floors.FLOOR_1
                             }
 
-                            R.id.floor2 -> {
-                                imgView.setImageResource(Floors.FLOOR_2.res)
-                                floorTextView.text = "Этаж 2"
-                                2
+                            this.menu.findItem(R.id.floor2) -> {
+                                binding.menuView.textViewFloor.text = "Этаж 2"
+                                Floors.FLOOR_2
                             }
 
-                            R.id.floor3 -> {
-                                imgView.setImageResource(Floors.FLOOR_3.res)
-                                floorTextView.text = "Этаж 3"
-                                3
+                            this.menu.findItem(R.id.floor3) -> {
+                                binding.menuView.textViewFloor.text = "Этаж 3"
+                                Floors.FLOOR_3
                             }
 
-                            R.id.floor4 -> {
-                                imgView.setImageResource(Floors.FLOOR_4.res)
-                                floorTextView.text = "Этаж 4"
-                                4
+                            this.menu.findItem(R.id.floor4) -> {
+                                binding.menuView.textViewFloor.text = "Этаж 4"
+                                Floors.FLOOR_4
                             }
 
-                            R.id.floor5 -> {
-                                imgView.setImageResource(Floors.FLOOR_5.res)
-                                floorTextView.text = "Этаж 5"
-                                5
+                            this.menu.findItem(R.id.floor5) -> {
+                                binding.menuView.textViewFloor.text = "Этаж 5"
+                                Floors.FLOOR_5
                             }
-                            else -> 0
+
+                            else -> {
+                                Floors.FLOOR_1}
                         }
 
-                        mapView.updateDrawable()
-                        currentFloor = floorNum
+                        binding.touchImageView.updateFloor(floor)
 
                         when(item.groupId) {
                             R.id.buildingMenu -> {
-                                buildingTextView.text = "Корпус 8"
+                                binding.menuView.textViewBuilding.text = "Корпус 8"
                                 true
                             }
                             else -> {
@@ -165,11 +179,5 @@ class MainFragment(private val routeViewer: RouteViewer) : Fragment(), MainBotto
                     show()
                 }
     }
-
-    companion object {
-        @JvmStatic
-        fun newInstance(p: RouteViewer) = MainFragment(p)
-    }
-
 
 }

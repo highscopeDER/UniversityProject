@@ -1,8 +1,7 @@
 package com.example.universityproject.api
 
-
-
 import android.util.Log
+import com.example.universityproject.dijkstra.Dijkstra
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.android.Android
@@ -42,11 +41,21 @@ class API {
 
             }
             client.close()
+            Dijkstra.algorithm.buildGraph()
         }
     }
 
+
+    // 192.168.43.231
+    // "http://10.0.2.2:8080"
+
     private object Routes{
-        private const val base = "http://10.0.2.2:8080"
+
+        private const val local = "http://10.0.2.2:8080"
+        private const val network = "http://192.168.43.231:8080"
+
+
+        private const val base = local
         const val DEFAULT = base
         const val ALL_ROOMS = "$base/allClassRooms"
         const val DATA = "$base/data"

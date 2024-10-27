@@ -7,18 +7,24 @@ import kotlin.math.sqrt
 
 class Dijkstra () {
 
-    private fun <T> dijkstra(graph: Graph<T>, start: T): Map<T, T?> {
-        val S: MutableSet<T> = mutableSetOf() // a subset of vertices, for which we know the true distance
+    lateinit var graph: Graph<String>
+    private lateinit var pointsList: Map<String, String>
+    private lateinit var data: Map<String, List<String>>
+    private lateinit var coordinates: Map<String, Pair<Float, Float>>
 
-        val delta = graph.vertices.map { it to Int.MAX_VALUE }.toMap().toMutableMap()
-        delta[start] = 0
+    private fun <String> dijkstra(graph: Graph<String>, start: String): Map<String, String?> {
+        val S: MutableSet<String> = mutableSetOf() // a subset of vertices, for which we know the true distance
 
-        val previous: MutableMap<T, T?> = graph.vertices.map { it to null }.toMap().toMutableMap()
+        val delta: MutableMap<String, Float> = graph.vertices.map { it to Float.MAX_VALUE }.toMap().toMutableMap()
+        delta[start] = 0f
+
+        val previous: MutableMap<String, String?> = graph.vertices.map { it to null }.toMap().toMutableMap()
+
 
         while (S != graph.vertices) {
-            val v: T = delta
+            val v: String = delta
                 .filter { !S.contains(it.key) }
-                .minBy { it.value }
+                .minBy {  it.value }
                 .key
 
             graph.edges.getValue(v).minus(S).forEach { neighbor ->
@@ -28,7 +34,9 @@ class Dijkstra () {
                     delta[neighbor] = newPath
                     previous[neighbor] = v
                 }
+
             }
+
 
             S.add(v)
         }
@@ -36,13 +44,14 @@ class Dijkstra () {
         return previous.toMap()
     }
 
-    private fun <T> shortestPath(shortestPathTree: Map<T, T?>, start: T, end: T): List<T> {
-        fun pathTo(start: T, end: T): List<T> {
+    private fun <String> shortestPath(shortestPathTree: Map<String, String?>, start: String, end: String): List<String> {
+
+        fun pathTo(end: String): List<String> {
             if (shortestPathTree[end] == null) return listOf(end)
-            return listOf(pathTo(start, shortestPathTree[end]!!), listOf(end)).flatten()
+            return listOf(pathTo(shortestPathTree[end]!!), listOf(end)).flatten()
         }
 
-        return pathTo(start, end)
+        return pathTo(end)
     }
 
     private fun useDijkstra(graph: Graph<String>, start: String, end: String) : List<String> =
@@ -52,20 +61,17 @@ class Dijkstra () {
             end
         )
 
+    fun buildGraph(){
 
-    fun buildRoute(startPoint: String, endPoint: String) :  List< PointPosition > {
-        val data: Map<String, List<String>> = API.dbApi.getAlgorithmData()
-        val coordinates: Map<String, Pair<Float, Float>> = API.dbApi.getAllPointsCoordinates()
-        val pointsList = API.dbApi.getAllClassRooms()
+        pointsList = API.dbApi.getAllClassRooms()
+        data = API.dbApi.getAlgorithmData()
+        coordinates = API.dbApi.getAllPointsCoordinates()
 
         val vertices: Set<String> = data.keys
-        val edges: MutableMap<String, Set<String>> = mutableMapOf()
-        val weights: MutableMap<Pair<String, String>, Int> = mutableMapOf()
-
-        Log.d("TAG", coordinates.toString())
+        val edges: Map<String, List<String>> = data
+        val weights: MutableMap<Pair<String, String>, Float> = mutableMapOf()
 
         data.forEach {
-            edges[it.key] = it.value.toSet()
 
             val firstPoint = coordinates[it.key]
 
@@ -73,35 +79,33 @@ class Dijkstra () {
                 val secondPoint = coordinates[item]
                 val a = Pair(it.key, item)
 
-
                 val b = sqrt(
-                    (secondPoint!!.first - firstPoint!!.first).pow(2) + (secondPoint.second - firstPoint.second).pow(2)
-                ).toInt()
+                    (secondPoint!!.first - firstPoint!!.first).pow(2)
+                            +
+                            (secondPoint.second - firstPoint.second).pow(2)
+                )
 
                 weights[a] = b
             }
         }
-        val graph: Graph<String> = Graph(vertices, edges, weights)
+        graph = Graph(vertices, edges, weights)
+    }
 
+    fun buildRoute(startPoint: String, endPoint: String) :  List< PointPosition > {
 
+        val s = pointsList[startPoint]
+        val e = pointsList[endPoint]
 
-        val pathEdges = Pair(startPoint, endPoint)
-
-        val start = minOf(pathEdges.first, pathEdges.second)
-        val end: String = maxOf(pathEdges.first, pathEdges.second)
-
-        val s = pointsList[start]
-        val e = pointsList[end]
-
-        println("start point: $s, end point: $e")
-
-        val path: List<String> = useDijkstra(
+        var path: List<String> = useDijkstra(
             graph,
-            minOf(s!!, e!!),
-            maxOf(s, e))
+            s!!,
+            e!!
+        )
 
-
-        println("FIRST $path")
+        if (path.first() != s || path.last() != e) {
+            path = useDijkstra(graph, e, s)
+            path = path.reversed()
+        }
 
         val mappedPath: MutableList< PointPosition > = mutableListOf()
 
@@ -123,11 +127,7 @@ class Dijkstra () {
     companion object{
 
         val algorithm = Dijkstra()
-
     }
-
-
-
 
 }
 
