@@ -85,11 +85,11 @@ class RouteBuilder {
                         }
                     }
 
-                    val newbm = bitmap.applyCanvas {
+                    val newBitmap = bitmap.applyCanvas {
                         drawPath(path, paint)
                     }
 
-                    resultList.add(RouteStep(newbm, partInfo))
+                    resultList.add(RouteStep(newBitmap, partInfo))
                 }
             }
         }

@@ -24,7 +24,7 @@ class MainActivity : AppCompatActivity(), RouteViewer {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        dbApi.initialize()
+        //dbApi.initialize()
         RouteBuilder.resources = resources
        // MainFragment.newInstance(this)
         fmanager.beginTransaction().apply {

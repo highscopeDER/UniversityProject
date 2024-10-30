@@ -1,23 +1,32 @@
 package com.example.universityproject.model
 
-import android.graphics.RectF
 import com.example.universityproject.R
 
 enum class Floors(
     val res: Int,
-    val areasInfo: Map<String, RectF>
+    val areasInfo: List<AreaInfoItem>
 ) {
 
-    FLOOR_1(res = R.drawable.floor1, mapOf()),
-    FLOOR_2(res = R.drawable.floor2, mapOf()),
+    FLOOR_1(res = R.drawable.floor1, listOf()),
+    FLOOR_2(res = R.drawable.floor2, listOf()),
     FLOOR_3(
-        res = R.drawable.floor3_new,
-        mapOf(
-            "8308" to rects.rect1,
-            "8309" to rects.rect2
+        res = R.drawable.floor3,
+        listOf(
+            AreaInfoItem("8301", rects.path8301),
+            AreaInfoItem("8302",rects.path8302),
+            AreaInfoItem("8303",rects.path8303),
+            AreaInfoItem("8308",rects.path1),
+            AreaInfoItem("8309",rects.path2),
+            AreaInfoItem("wc",rects.pathWC, R.drawable.ic_woman_wc)
         )
     ),
-    FLOOR_4(res = R.drawable.floor4, mapOf()),
-    FLOOR_5(res = R.drawable.floor5_colored, mapOf())
+    FLOOR_4(res = R.drawable.floor4, listOf()),
+    FLOOR_5(
+        res = R.drawable.floor5,
+        listOf(
+            AreaInfoItem("8503", rects.pathPoints)
+        )
+    )
+
 
 }

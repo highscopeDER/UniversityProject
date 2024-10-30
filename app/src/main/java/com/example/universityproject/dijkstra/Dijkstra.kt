@@ -1,6 +1,5 @@
 package com.example.universityproject.dijkstra
 
-import android.util.Log
 import com.example.universityproject.api.API
 import kotlin.math.pow
 import kotlin.math.sqrt
@@ -44,7 +43,7 @@ class Dijkstra () {
         return previous.toMap()
     }
 
-    private fun <String> shortestPath(shortestPathTree: Map<String, String?>, start: String, end: String): List<String> {
+    private fun <String> shortestPath(shortestPathTree: Map<String, String?>, end: String): List<String> {
 
         fun pathTo(end: String): List<String> {
             if (shortestPathTree[end] == null) return listOf(end)
@@ -57,7 +56,6 @@ class Dijkstra () {
     private fun useDijkstra(graph: Graph<String>, start: String, end: String) : List<String> =
         shortestPath(
             dijkstra(graph, start),
-            start,
             end
         )
 
@@ -125,7 +123,6 @@ class Dijkstra () {
     }
 
     companion object{
-
         val algorithm = Dijkstra()
     }
 

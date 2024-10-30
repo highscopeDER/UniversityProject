@@ -3,15 +3,15 @@ package com.example.universityproject.screens.map
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.graphics.RectF
 import android.util.AttributeSet
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.applyCanvas
 import androidx.core.graphics.drawable.toBitmap
+import com.example.universityproject.model.AreaInfoItem
 import com.example.universityproject.model.ClickableArea
 import com.example.universityproject.model.ClickableAreasList
 import com.example.universityproject.model.Floors
-import com.example.universityproject.model.getSpecifiedCoordinates
+import com.example.universityproject.model.makeClickablePath
 import com.example.universityproject.screens.bottomsheet.mainBottomSheetFragment.MainBottomSheetInterface
 import com.ortiz.touchview.TouchImageView
 
@@ -45,11 +45,12 @@ class MapView(
         invalidate()
     }
     
-    private fun loadClickableObjects(areas: Map<String, RectF>): List<ClickableArea> =
+    private fun loadClickableObjects(areas: List<AreaInfoItem>): List<ClickableArea> =
         areas.map {
             ClickableArea(
-                it.value.getSpecifiedCoordinates(drawable.intrinsicWidth.toFloat(), drawable.intrinsicHeight.toFloat()),
-                it.key,
+                it.points.makeClickablePath(floorMap.width.toFloat(), floorMap.height.toFloat()),
+                it.name,
+                it.icon,
                 context,
                 fragment,
                 {clickableAreas.unselectAll()}

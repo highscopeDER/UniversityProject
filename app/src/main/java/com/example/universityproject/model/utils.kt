@@ -1,5 +1,6 @@
 package com.example.universityproject.model
 
+import android.graphics.PointF
 import android.graphics.RectF
 
 fun RectF.getSpecifiedCoordinates(mapWidth: Float, mapHeight: Float): RectF {
@@ -23,4 +24,42 @@ fun RectF.getSpecifiedCoordinates(mapWidth: Float, mapHeight: Float): RectF {
 
     return result
 }
+
+fun PointF.getSpecifiedCoordinates(mapWidth: Float, mapHeight: Float): PointF {
+    val length = 112.5f
+    val height = 29.9f
+
+    val x_percent = x / length
+    val y_percent = (height - y) / height
+
+    return PointF(
+        mapWidth * x_percent,
+        mapHeight * y_percent
+    )
+}
+
+
+fun List<PointF>.makeClickablePath(w: Float, h: Float) : ClickablePath {
+    var first = true
+
+    return ClickablePath().apply {
+
+        val list = map {
+            it.getSpecifiedCoordinates(w ,h)
+        }
+
+        list.forEach {
+            if (first) {
+                moveTo(it.x, it.y)
+            }
+            lineTo(it.x, it.y)
+            first = false
+        }
+
+        close()
+
+    }
+}
+
+
 
