@@ -9,48 +9,31 @@
     style="@style/ThemeOverlay.Material3.BottomSheetDialog"
     >
 
-    <com.google.android.material.search.SearchBar
-        android:id="@+id/searchBar"
-        android:layout_width="0dp"
+    <androidx.cardview.widget.CardView
+        style="@style/Widget.Material3.CardView.Elevated"
+        android:id="@+id/searchCard"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-
-        app:layout_constraintWidth_percent="0.6"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="16dp"
-        android:elevation="10dp"
-        />
-
-    <com.google.android.material.search.SearchView
-        android:id="@+id/searchView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-
-
-
-        app:layout_constraintWidth_percent="0.6"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="16dp"
-        android:visibility="gone"
-        />
-
-    <Button
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-
-        app:layout_constraintTop_toTopOf="@id/searchBar"
-        app:layout_constraintStart_toEndOf="@id/searchBar"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="@id/searchBar"
+        android:layout_marginTop="16dp"
+        app:cardUseCompatPadding="true"
+        android:layout_marginHorizontal="16dp"
+        app:cardElevation="2dp"
+        app:cardCornerRadius="8dp"
+        >
 
-        app:layout_constraintWidth_percent="0.3"
-        android:elevation="10dp"
-        />
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/searchView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:queryHint="search here"
+            app:iconifiedByDefault="false"
+            app:queryBackground="@android:color/transparent"
+            />
+
+    </androidx.cardview.widget.CardView>
 
     <TextView
         android:id="@+id/PlaceHolderTextView1"
@@ -63,7 +46,7 @@
         android:paddingEnd="16dp"
         android:autoSizeTextType="uniform"
         android:autoSizeMaxTextSize="24sp"
-        app:layout_constraintTop_toBottomOf="@+id/searchBar"
+        app:layout_constraintTop_toBottomOf="@id/searchCard"
         />
 
     <androidx.recyclerview.widget.RecyclerView

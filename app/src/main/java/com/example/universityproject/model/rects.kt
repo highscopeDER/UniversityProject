@@ -5,25 +5,11 @@ import android.graphics.RectF
 
 object rects {
 
-    private val rect1 = RectF().apply {
-        top = 20.301504f
-        bottom = 13.7487840f
-        left = 41.01538f
-        right = 49.043537f
-    }
-
     val pathWC = listOf(
-        PointF(93.7416f,13.7496f),
-        PointF(98.4535f,13.7496f),
-        PointF(98.4535f,20.3001f),
-        PointF(93.7416f,20.3001f),
-    )
-
-    val path1 = listOf(
-        PointF(rect1.left, rect1.top),
-        PointF(rect1.right, rect1.top),
-        PointF(rect1.right, rect1.bottom),
-        PointF(rect1.left, rect1.bottom)
+        PointF(93.7416f, 13.749561f),
+        PointF(98.45354f, 13.749561f),
+        PointF(98.45354f,20.300112f),
+        PointF(93.7416f,20.300112f),
     )
 
     val path8302 = listOf(
@@ -50,19 +36,23 @@ object rects {
         PointF(103.2557f, 9.0998f)
     )
 
+    val path8309 = listOf(
 
-    private val rect2 = RectF().apply {
-        top = 20.301504f
-        right = 40.865383f
-        left = 31.4953650f
-        bottom = 13.7487840f
-    }
+        PointF(31.4978f,	13.7496f),
+        PointF(40.8678f,	13.7496f),
+        PointF(40.8678f,	20.3001f),
+        PointF(31.4978f,	20.3001f)
 
-    val path2 = listOf(
-        PointF(rect2.left, rect2.top),
-        PointF(rect2.right, rect2.top),
-        PointF(rect2.right, rect2.bottom),
-        PointF(rect2.left, rect2.bottom)
+    )
+
+    val path8308 = listOf(
+
+        PointF(49.5004f,	13.7496f),
+        PointF(49.5004f,	20.3001f),
+        PointF(41.0178f,	20.3001f),
+        PointF(41.0178f,	13.7496f),
+
+
     )
 
     private val rectFloor5 = RectF().apply {
@@ -79,6 +69,27 @@ object rects {
         PointF(rectFloor5.left, rectFloor5.bottom),
     )
 
+
+    val path8408 = listOf(
+
+
+        PointF(49.5004f,	13.7496f),
+        PointF(49.5004f,	20.3001f),
+        PointF(38.3649f,	20.3001f),
+        PointF(38.3649f,	13.7496f)
+
+
+    )
+
+    val path8409 = listOf(
+
+
+        PointF(58.3838f,	13.7496f),
+        PointF(58.3838f,	20.3001f),
+        PointF(50.1004f,	20.3001f),
+        PointF(50.1004f,	13.7496f),
+
+    )
 
 
 

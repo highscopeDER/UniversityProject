@@ -6,18 +6,31 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.universityproject.databinding.SecondaryListViewItemBinding
 
-class SecondListViewAdapter(private val data: Array<Pair<String, String>>)
+class SecondListViewAdapter(
+    private val data: List<Pair<String, String>>,
+    val itemOnClick: (Pair<String, String>) -> Unit
+)
     : RecyclerView.Adapter<SecondListViewAdapter.ViewHolder>() {
 
     private lateinit var binding: SecondaryListViewItemBinding
+    
+    private var actualData = data
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view){
 
         var viewHolderBinding: SecondaryListViewItemBinding
 
         init {
-
             viewHolderBinding = SecondaryListViewItemBinding.bind(view)
+            viewHolderBinding.root.setOnClickListener{
+                itemOnClick(
+                    Pair(
+                        viewHolderBinding.start.text.toString(),
+                        viewHolderBinding.end.text.toString()
+                    )
+                )
+
+            }
         }
     }
 
@@ -27,13 +40,22 @@ class SecondListViewAdapter(private val data: Array<Pair<String, String>>)
         return ViewHolder(binding.root)
     }
 
-    override fun getItemCount(): Int = data.size
+    override fun getItemCount(): Int = actualData.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
-        holder.viewHolderBinding.start.text = data[position].first
-        holder.viewHolderBinding.end.text = data[position].second
+        holder.viewHolderBinding.start.text = actualData[position].first
+        holder.viewHolderBinding.end.text = actualData[position].second
 
+    }
+
+    fun filterData(query: String?) {
+        if (query != null) {
+            actualData = data.filter {
+                it.first.contains(query) or it.second.contains(query)
+            }
+        }
+        notifyDataSetChanged()
     }
 
 }

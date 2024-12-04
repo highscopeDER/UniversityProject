@@ -8,7 +8,7 @@ data class PointPosition(
     val y: Float
 ) {
     fun getSpecifiedCoordinates(mapWidth: Float, mapHeight: Float): PointF {
-        val length = 112.5f
+        val length = 112.753f
         val height = 29.9f
 
         val x_percent = x / length

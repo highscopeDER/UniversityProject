@@ -6,7 +6,12 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.universityproject.databinding.MainListViewItemBinding
 
-class FirstListViewAdapter(private val data: List<String>, val l: MainListViewAdapterInterface) : RecyclerView.Adapter<FirstListViewAdapter.ViewHolder>() {
+class FirstListViewAdapter(
+    private val data: List<String>,
+    val itemOnClick: (selection: String) -> Unit
+) : RecyclerView.Adapter<FirstListViewAdapter.ViewHolder>() {
+
+    private var actualData = data
 
     private lateinit var binding: MainListViewItemBinding
 
@@ -17,7 +22,7 @@ class FirstListViewAdapter(private val data: List<String>, val l: MainListViewAd
         init {
             viewHolderBinding = MainListViewItemBinding.bind(view)
             viewHolderBinding.root.setOnClickListener {
-                l.onClick(viewHolderBinding.textView.text.toString())
+                itemOnClick(viewHolderBinding.textView.text.toString())
             }
         }
 
@@ -33,13 +38,18 @@ class FirstListViewAdapter(private val data: List<String>, val l: MainListViewAd
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.viewHolderBinding.textView.text = data[position]
+        holder.viewHolderBinding.textView.text = actualData[position]
     }
 
-    override fun getItemCount(): Int = data.size
+    override fun getItemCount(): Int = actualData.size
 
-    interface MainListViewAdapterInterface{
-        fun onClick(desc: String)
+    fun filterData(query: String?) {
+        if (query != null){
+            actualData = data.filter {
+                it.contains(query)
+            }
+        }
+        notifyDataSetChanged()
     }
 
 }

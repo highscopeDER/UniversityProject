@@ -72,11 +72,9 @@ class Dijkstra () {
         data.forEach {
 
             val firstPoint = coordinates[it.key]
-
             it.value.forEach { item ->
                 val secondPoint = coordinates[item]
                 val a = Pair(it.key, item)
-
                 val b = sqrt(
                     (secondPoint!!.first - firstPoint!!.first).pow(2)
                             +
@@ -104,6 +102,8 @@ class Dijkstra () {
             path = useDijkstra(graph, e, s)
             path = path.reversed()
         }
+
+        println(path)
 
         val mappedPath: MutableList< PointPosition > = mutableListOf()
 

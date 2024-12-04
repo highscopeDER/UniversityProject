@@ -1,29 +1,45 @@
 package com.example.universityproject.screens.fragments
 
-import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager.LayoutParams.FLAG_DIM_BEHIND
 import android.widget.PopupMenu
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.example.universityproject.R
 import com.example.universityproject.databinding.FragmentMainBinding
-import com.example.universityproject.route.RouteBuilder
 import com.example.universityproject.model.Floors
-import com.example.universityproject.screens.activities.RouteViewer
+import com.example.universityproject.route.RouteBuilder
 import com.example.universityproject.screens.bottomsheet.mainBottomSheetFragment.MainBottomSheetFragment
-import com.example.universityproject.screens.bottomsheet.mainBottomSheetFragment.MainBottomSheetInterface
 
-class MainFragment(private val routeViewer: RouteViewer) : Fragment(), MainBottomSheetInterface{
+class MainFragment(
+    private val enterRouteViewer: (RouteViewerFragment) -> Unit,
+    private val exitRouteViewer: () -> Unit
+) : Fragment(){
 
     private lateinit var binding: FragmentMainBinding
 
-    override var startPoint: String? = null
-    override var endPoint: String? = null
+    private var startPoint: String? = null
+    private var endPoint: String? = null
+
+    private val startPointSetter: (point: String) -> Unit = {
+        startPoint = it
+        updateUI()
+    }
+
+    private val endPointSetter: (point: String) -> Unit = {
+        endPoint = it
+        updateUI()
+    }
+
+    private val routeSetter: (start: String, end: String) -> Unit = { s, e ->
+        startPoint = s
+        endPoint = e
+        updateUI()
+    }
 
     private lateinit var fmanager: FragmentManager
 
@@ -34,42 +50,10 @@ class MainFragment(private val routeViewer: RouteViewer) : Fragment(), MainBotto
         binding = FragmentMainBinding.inflate(layoutInflater)
         // Inflate the layout for this fragment
         fmanager = requireActivity().supportFragmentManager
-        binding.touchImageView.fragment = this
-
+        binding.touchImageView.pathEdgesSetter = Pair(startPointSetter, endPointSetter)
         return binding.root
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        startPoint = null
-        endPoint = null
-    }
-
-    override fun updateUI() {
-        binding.pickStartButton.text = startPoint
-        binding.pickEndButton.text = endPoint
-
-        if (startPoint != null && endPoint != null) {
-
-            routeViewer.showRouteFragment(
-                RouteViewerFragment(
-                    routeViewer,
-                    RouteBuilder.buildRoute(startPoint!!, endPoint!!)
-                )
-            )
-
-            Log.d("TAG", "WTFFF")
-
-        }
-    }
-
-    private fun clearInput(){
-        startPoint = null
-        endPoint = null
-        updateUI()
-    }
-
-    @SuppressLint("ResourceType", "ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -84,35 +68,28 @@ class MainFragment(private val routeViewer: RouteViewer) : Fragment(), MainBotto
             }
 
         binding.pickStartButton.setOnClickListener {
-
-           if (activity != null) {
-               MainBottomSheetFragment(MainBottomSheetInterface.selectionType.START, this)
-                   .show(fmanager, "fw")
-           }
+           showBottomSheet(startPointSetter)
 
         }
 
         binding.pickEndButton.setOnClickListener {
-            if (activity != null) {
-                MainBottomSheetFragment(MainBottomSheetInterface.selectionType.END, this)
-                    .show(fmanager, "wf")
-            }
+            showBottomSheet(endPointSetter)
         }
+
 
         binding.touchImageView.setOnTouchListener { _, event ->
 
             if (event.action != MotionEvent.ACTION_MOVE && event.action != MotionEvent.ACTION_UP) {
-                Log.d(
-                    "TAG",
-                    "x, y - ${event.x}, ${event.y}"
-                )
                 binding.touchImageView.checkClick(event.x, event.y)
+                binding.touchImageView.performClick()
             }
 
             true
         }
 
-        val menuOnClick: View.OnClickListener = View.OnClickListener { showPopupMenu(binding.menuView.dropDownIcon) }
+        val menuOnClick: View.OnClickListener = View.OnClickListener {
+            showPopupMenu(binding.menuView.dropDownIcon)
+        }
 
         binding.menuView
             .apply {
@@ -125,6 +102,40 @@ class MainFragment(private val routeViewer: RouteViewer) : Fragment(), MainBotto
     override fun onPause() {
         super.onPause()
         clearInput()
+    }
+
+
+    private fun updateUI() {
+        binding.pickStartButton.text = startPoint
+        binding.pickEndButton.text = endPoint
+
+        if (startPoint != null && endPoint != null) {
+            enterRouteViewer(
+                RouteViewerFragment(
+                    exitRouteViewer,
+                    RouteBuilder.buildRoute(startPoint!!, endPoint!!)
+                )
+            )
+        }
+    }
+
+    private fun clearInput(){
+        startPoint = null
+        endPoint = null
+        updateUI()
+    }
+
+
+    private fun showBottomSheet(pointSetter: (item: String) -> Unit) {
+        if (activity != null) {
+            MainBottomSheetFragment(
+                onItemSelected = pointSetter,
+                onRouteSelected = routeSetter
+            )
+                .show(fmanager, null)
+
+
+        }
     }
 
     private fun showPopupMenu(anchor: View?) {

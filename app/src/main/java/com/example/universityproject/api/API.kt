@@ -7,7 +7,6 @@ import io.ktor.client.call.body
 import io.ktor.client.engine.android.Android
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.get
-import io.ktor.client.request.url
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -20,6 +19,7 @@ class API {
     private var list: Map<String, String> = mapOf()
     private var algorithmData: Map<String, List<String>> = mapOf()
     private var pointsCoord: Map<String, Pair<Float, Float>> = mapOf()
+    private var rooms: Map<String, List<Pair<Float, Float>>> = mapOf()
 
     private var client = HttpClient(Android) {
 
@@ -38,7 +38,7 @@ class API {
                 list = allClassRooms()
                 algorithmData = mappedData()
                 pointsCoord = pointsCoordinates()
-
+                rooms = rooms()
             }
             client.close()
             Dijkstra.algorithm.buildGraph()
@@ -54,18 +54,18 @@ class API {
         private const val local = "http://10.0.2.2:8080"
         private const val network = "http://192.168.43.231:8080"
 
-
         private const val base = local
         const val DEFAULT = base
-        const val ALL_ROOMS = "$base/allClassRooms"
-        const val DATA = "$base/data"
-        const val COORD = "$base/coordinates"
+        const val CLASSROOMS = "$base/v2/allClassRooms"
+        const val DATA = "$base/v2/data"
+        const val COORDINATES = "$base/v2/coordinates"
+        const val CLICKABLE_AREAS = "$base/v2/rooms"
     }
 
 
     private suspend fun allClassRooms(): Map<String, String> {
         return withContext(Dispatchers.IO) {
-            client.get(Routes.ALL_ROOMS).body()
+            client.get(Routes.CLASSROOMS).body()
         }
     }
 
@@ -77,15 +77,24 @@ class API {
 
     private suspend fun pointsCoordinates(): Map<String, Pair<Float, Float>>{
         return withContext(Dispatchers.IO) {
-            client.get(Routes.COORD).body()
+            client.get(Routes.COORDINATES).body()
         }
     }
+
+    private suspend fun rooms() : Map<String, List<Pair<Float, Float>>> {
+        return withContext(Dispatchers.IO) {
+            client.get(Routes.CLICKABLE_AREAS).body()
+        }
+    }
+
 
     fun getAllClassRooms() : Map<String, String> = list
 
     fun getAlgorithmData(): Map<String, List<String>> = algorithmData
 
     fun getAllPointsCoordinates(): Map<String, Pair<Float, Float>> = pointsCoord
+
+    fun getClicableAreas(): Map<String, List<Pair<Float, Float>>> = rooms
 
     fun getPointCoordinates(point: String): Pair<Float, Float>? = pointsCoord[point]
 

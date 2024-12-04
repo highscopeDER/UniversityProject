@@ -12,7 +12,6 @@ import com.example.universityproject.model.ClickableArea
 import com.example.universityproject.model.ClickableAreasList
 import com.example.universityproject.model.Floors
 import com.example.universityproject.model.makeClickablePath
-import com.example.universityproject.screens.bottomsheet.mainBottomSheetFragment.MainBottomSheetInterface
 import com.ortiz.touchview.TouchImageView
 
 class MapView(
@@ -22,7 +21,7 @@ class MapView(
 
     private var floorMap: Bitmap = drawable.toBitmap()
     private lateinit var outputBitmap: Bitmap
-    lateinit var fragment: MainBottomSheetInterface
+    lateinit var pathEdgesSetter: Pair<(item: String) -> Unit, (item: String) -> Unit>
     private val clickableAreas = ClickableAreasList(context)
 
     override fun onDraw(canvas: Canvas) {
@@ -52,13 +51,16 @@ class MapView(
                 it.name,
                 it.icon,
                 context,
-                fragment,
+                pathEdgesSetter,
                 {clickableAreas.unselectAll()}
             ) {
                 clickableAreas.unselectAll()
             }
         }
 
+    override fun performClick(): Boolean {
+        return super.performClick()
+    }
 
     fun checkClick(x: Float, y: Float) {
         val p = transformCoordTouchToBitmap(x, y, true)

@@ -1,5 +1,4 @@
 package com.example.universityproject.model
-
 import com.example.universityproject.R
 
 enum class Floors(
@@ -15,12 +14,15 @@ enum class Floors(
             AreaInfoItem("8301", rects.path8301),
             AreaInfoItem("8302",rects.path8302),
             AreaInfoItem("8303",rects.path8303),
-            AreaInfoItem("8308",rects.path1),
-            AreaInfoItem("8309",rects.path2),
+            AreaInfoItem("8308",rects.path8308),
+            AreaInfoItem("8309",rects.path8309),
             AreaInfoItem("wc",rects.pathWC, R.drawable.ic_woman_wc)
         )
     ),
-    FLOOR_4(res = R.drawable.floor4, listOf()),
+    FLOOR_4(res = R.drawable.floor4, listOf(
+        AreaInfoItem("8408", rects.path8408),
+        AreaInfoItem("8409", rects.path8409)
+    )),
     FLOOR_5(
         res = R.drawable.floor5,
         listOf(
@@ -28,5 +30,9 @@ enum class Floors(
         )
     )
 
+    //TODO: сделать так, чтобы заполнялось из другого источника.
+    // показывать экран загрузки пока не прогрузятся все данные
+
 
 }
+
