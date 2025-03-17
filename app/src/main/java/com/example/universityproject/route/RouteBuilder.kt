@@ -9,10 +9,10 @@ import android.graphics.RectF
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.applyCanvas
 import androidx.core.graphics.drawable.toBitmap
-import com.example.universityproject.api.API
 import com.example.universityproject.dijkstra.Dijkstra
 import com.example.universityproject.dijkstra.PointPosition
-import com.example.universityproject.model.Floors
+import com.example.universityproject.model.floors.Floors
+import com.example.universityproject.model.RoutePoint
 import com.example.universityproject.model.building
 import com.example.universityproject.model.floor
 import com.example.universityproject.model.isLadder
@@ -33,10 +33,10 @@ class RouteBuilder {
         return "${pointName.building} корпус, ${pointName.floor} этаж"
     }
 
-    private fun getFullRoute(s: String, e: String) {
-        startClassroom = s
-        endClassroom = e
-        fullPath = Dijkstra.algorithm.buildRoute(s, e)
+    private fun getFullRoute(s: RoutePoint, e: RoutePoint) {
+        startClassroom = s.label
+        endClassroom = e.label
+        fullPath = Dijkstra.algorithm.buildRoute(s.name, e.name)
     }
 
     private fun splitByFloors(): List<RouteStep> {
@@ -81,14 +81,16 @@ class RouteBuilder {
             //TODO: отредачить с учетом новых точек интереса
 
 
-            val floor: Floors? = when (part.first().name.floor) {
-                1 -> Floors.FLOOR_1
-                2 -> Floors.FLOOR_2
-                3 -> Floors.FLOOR_3
-                4 -> Floors.FLOOR_4
-                5 -> Floors.FLOOR_5
-                else -> null
-            }
+//            val floor: Floors? = when (part.first().name.floor) {
+//                1 -> Floors.FLOOR_1
+//                2 -> Floors.FLOOR_2
+//                3 -> Floors.FLOOR_3
+//                4 -> Floors.FLOOR_4
+//                5 -> Floors.FLOOR_5
+//                else -> null
+//            }
+
+            val floor: Int? = Floors.floors[part.first().name.floor]?.res
 
             if (floor != null) {
 
@@ -99,7 +101,7 @@ class RouteBuilder {
                 val options: BitmapFactory.Options = BitmapFactory.Options()
                 options.inJustDecodeBounds = true
 
-                val bitmap = ResourcesCompat.getDrawable(resources, floor.res, null)?.toBitmap()
+                val bitmap = ResourcesCompat.getDrawable(resources, floor, null)?.toBitmap()
 
                 if (bitmap != null) {
                     path.apply {
@@ -114,6 +116,7 @@ class RouteBuilder {
                     }
 
                     path.computeBounds(pathBounds, true)
+
 
                     val newBitmap = bitmap.applyCanvas {
                         drawPath(path, paint)
@@ -131,7 +134,7 @@ class RouteBuilder {
     companion object {
         private val builder = RouteBuilder()
 
-        fun buildRoute(start: String, end: String): List<RouteStep> {
+        fun buildRoute(start: RoutePoint, end: RoutePoint): List<RouteStep> {
             builder.getFullRoute(start, end)
             return builder.splitByFloors()
         }

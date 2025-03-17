@@ -5,10 +5,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.universityproject.databinding.MainListViewItemBinding
+import com.example.universityproject.model.RoutePoint
 
 class FirstListViewAdapter(
-    private val data: List<String>,
-    val itemOnClick: (selection: String) -> Unit
+    private val data: List<RoutePoint>,
+    val itemOnClick: (selection: RoutePoint) -> Unit
 ) : RecyclerView.Adapter<FirstListViewAdapter.ViewHolder>() {
 
     private var actualData = data
@@ -18,11 +19,13 @@ class FirstListViewAdapter(
     inner class ViewHolder(view: View): RecyclerView.ViewHolder(view){
 
         var viewHolderBinding: MainListViewItemBinding
+        lateinit var item: RoutePoint
 
         init {
             viewHolderBinding = MainListViewItemBinding.bind(view)
             viewHolderBinding.root.setOnClickListener {
-                itemOnClick(viewHolderBinding.textView.text.toString())
+
+                itemOnClick(item)
             }
         }
 
@@ -38,7 +41,8 @@ class FirstListViewAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.viewHolderBinding.textView.text = actualData[position]
+        holder.viewHolderBinding.textView.text = actualData[position].label
+        holder.item = actualData[position]
     }
 
     override fun getItemCount(): Int = actualData.size
@@ -46,7 +50,7 @@ class FirstListViewAdapter(
     fun filterData(query: String?) {
         if (query != null){
             actualData = data.filter {
-                it.contains(query)
+                it.label.lowercase().contains(query)
             }
         }
         notifyDataSetChanged()

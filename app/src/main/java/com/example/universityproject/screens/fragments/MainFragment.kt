@@ -5,13 +5,13 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager.LayoutParams.FLAG_DIM_BEHIND
 import android.widget.PopupMenu
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.example.universityproject.R
 import com.example.universityproject.databinding.FragmentMainBinding
-import com.example.universityproject.model.Floors
+import com.example.universityproject.model.floors.Floors
+import com.example.universityproject.model.RoutePoint
 import com.example.universityproject.route.RouteBuilder
 import com.example.universityproject.screens.bottomsheet.mainBottomSheetFragment.MainBottomSheetFragment
 
@@ -22,20 +22,20 @@ class MainFragment(
 
     private lateinit var binding: FragmentMainBinding
 
-    private var startPoint: String? = null
-    private var endPoint: String? = null
+    private var startPoint: RoutePoint? = null
+    private var endPoint: RoutePoint? = null
 
-    private val startPointSetter: (point: String) -> Unit = {
+    private val startPointSetter: (point: RoutePoint) -> Unit = {
         startPoint = it
         updateUI()
     }
 
-    private val endPointSetter: (point: String) -> Unit = {
+    private val endPointSetter: (point: RoutePoint) -> Unit = {
         endPoint = it
         updateUI()
     }
 
-    private val routeSetter: (start: String, end: String) -> Unit = { s, e ->
+    private val routeSetter: (start: RoutePoint, end: RoutePoint) -> Unit = { s, e ->
         startPoint = s
         endPoint = e
         updateUI()
@@ -51,7 +51,9 @@ class MainFragment(
         // Inflate the layout for this fragment
         fmanager = requireActivity().supportFragmentManager
         binding.touchImageView.pathEdgesSetter = Pair(startPointSetter, endPointSetter)
+
         return binding.root
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -61,10 +63,16 @@ class MainFragment(
             it.isActivated = !it.isActivated
         }
 
+        while(Floors.floors.isEmpty()) {
+
+        }
+
          binding.touchImageView.apply {
-                minZoom = 0.1f
-                maxZoom = 5f
-                setZoom(0.2f)
+             minZoom = 0.1f
+             maxZoom = 5f
+             setZoom(0.2f)
+
+             updateFloor(Floors.floors[1]!!)
             }
 
         binding.pickStartButton.setOnClickListener {
@@ -104,10 +112,16 @@ class MainFragment(
         clearInput()
     }
 
+    override fun onResume() {
+        super.onResume()
+        binding.touchImageView.updateFloor(Floors.floors[1]!!)
+        println("fragment resume")
+    }
+
 
     private fun updateUI() {
-        binding.pickStartButton.text = startPoint
-        binding.pickEndButton.text = endPoint
+        binding.pickStartButton.text = startPoint?.label
+        binding.pickEndButton.text = endPoint?.label
 
         if (startPoint != null && endPoint != null) {
             enterRouteViewer(
@@ -126,15 +140,13 @@ class MainFragment(
     }
 
 
-    private fun showBottomSheet(pointSetter: (item: String) -> Unit) {
+    private fun showBottomSheet(pointSetter: (item: RoutePoint) -> Unit) {
         if (activity != null) {
             MainBottomSheetFragment(
                 onItemSelected = pointSetter,
                 onRouteSelected = routeSetter
             )
                 .show(fmanager, null)
-
-
         }
     }
 
@@ -148,31 +160,32 @@ class MainFragment(
                         when (item) {
                             this.menu.findItem(R.id.floor1) -> {
                                 binding.menuView.textViewFloor.text = "Этаж 1"
-                                Floors.FLOOR_1
+                                Floors.floors[1]!!
                             }
 
                             this.menu.findItem(R.id.floor2) -> {
                                 binding.menuView.textViewFloor.text = "Этаж 2"
-                                Floors.FLOOR_2
+                                Floors.floors[2]!!
                             }
 
                             this.menu.findItem(R.id.floor3) -> {
                                 binding.menuView.textViewFloor.text = "Этаж 3"
-                                Floors.FLOOR_3
+                                Floors.floors[3]!!
                             }
 
                             this.menu.findItem(R.id.floor4) -> {
                                 binding.menuView.textViewFloor.text = "Этаж 4"
-                                Floors.FLOOR_4
+                                Floors.floors[4]!!
                             }
 
                             this.menu.findItem(R.id.floor5) -> {
                                 binding.menuView.textViewFloor.text = "Этаж 5"
-                                Floors.FLOOR_5
+                                Floors.floors[5]!!
                             }
 
                             else -> {
-                                Floors.FLOOR_1}
+                                Floors.floors[1]!!
+                            }
                         }
 
                         binding.touchImageView.updateFloor(floor)

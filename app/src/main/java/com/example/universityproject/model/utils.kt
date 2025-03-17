@@ -2,8 +2,8 @@ package com.example.universityproject.model
 
 import android.graphics.PointF
 import android.graphics.RectF
-import kotlin.math.exp
-import kotlin.math.max
+import com.example.universityproject.R
+import com.example.universityproject.screens.map.clickable.ClickablePath
 import kotlin.math.min
 
 fun RectF.getSpecifiedCoordinates(mapWidth: Float, mapHeight: Float): RectF {
@@ -81,6 +81,16 @@ fun String.isLadder(): Boolean = this.last() == 'l'
 val String.floor: Int
     get() = this[1].digitToInt()
 
+val Int.resource: Int
+    get() = when(this) {
+        1 -> R.drawable.floorwtf2
+        2 -> R.drawable.floor2
+        3 -> R.drawable.floor3
+        4 -> R.drawable.floor4
+        5 -> R.drawable.floor5
+        else -> 0
+    }
+
 val String.building: Int
     get() = when(this[0]) {
             'a' -> 1
@@ -98,5 +108,7 @@ val String.building: Int
             'm' -> 13
             else -> 0
         }
+
+
 
 

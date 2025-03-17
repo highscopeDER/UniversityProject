@@ -5,12 +5,15 @@ import android.os.Bundle
 import android.view.View
 import com.example.universityproject.R
 import com.example.universityproject.databinding.ClickableAreaSelectionBottomSheetFragmentBinding
+import com.example.universityproject.model.RoutePoint
+import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
+import com.google.android.material.bottomsheet.BottomSheetBehavior.State
 import com.google.android.material.bottomsheet.BottomSheetDialog
 
 class ClickableAreaSelectionBottomSheetDialog(
     context: Context,
-    private val pathEdgesSetter: Pair<(item: String) -> Unit, (item: String) -> Unit>,
-    private val str: String,
+    private val pathEdgesSetter: Pair<(item: RoutePoint) -> Unit, (item: RoutePoint) -> Unit>,
+    private val str: RoutePoint,
     private val onDismiss: () -> Unit
 ) :  BottomSheetDialog(context){
 
@@ -24,7 +27,10 @@ class ClickableAreaSelectionBottomSheetDialog(
         )
 
         setContentView(binding.root)
-        binding.tv.text = str
+        binding.tv.text = str.label
+
+        behavior.peekHeight = 1000
+        behavior.state = STATE_EXPANDED
 
         binding.toStart.setOnClickListener {
             pathEdgesSetter.first(str)

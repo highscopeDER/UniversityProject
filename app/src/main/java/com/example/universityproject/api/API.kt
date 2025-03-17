@@ -1,7 +1,13 @@
 package com.example.universityproject.api
 
+import android.graphics.PointF
 import android.util.Log
 import com.example.universityproject.dijkstra.Dijkstra
+import com.example.universityproject.screens.map.clickable.AreaInfoItem
+import com.example.universityproject.model.floors.FloorAreas
+import com.example.universityproject.model.floors.Floors
+import com.example.universityproject.model.RoutePoint
+import com.example.universityproject.model.resource
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.android.Android
@@ -19,7 +25,7 @@ class API {
     private var list: Map<String, String> = mapOf()
     private var algorithmData: Map<String, List<String>> = mapOf()
     private var pointsCoord: Map<String, Pair<Float, Float>> = mapOf()
-    private var rooms: Map<String, List<Pair<Float, Float>>> = mapOf()
+    private var floorAreas: List<FloorAreas> = listOf()
 
     private var client = HttpClient(Android) {
 
@@ -39,10 +45,12 @@ class API {
                 list = allClassRooms()
                 algorithmData = mappedData()
                 pointsCoord = pointsCoordinates()
-                rooms = rooms()
+                floorAreas = rooms()
             }
             client.close()
             Dijkstra.algorithm.buildGraph()
+            fillFloors()
+            //println(Floors.floors)
         }
     }
 
@@ -55,7 +63,7 @@ class API {
         private const val local = "http://10.0.2.2:8080"
         private const val network = "http://192.168.43.231:8080"
 
-        private const val base = local
+        private const val base = network
         const val DEFAULT = base
         const val CLASSROOMS = "$base/v2/allClassRooms"
         const val DATA = "$base/v2/data"
@@ -82,20 +90,44 @@ class API {
         }
     }
 
-    private suspend fun rooms() : Map<String, List<Pair<Float, Float>>> {
+    private suspend fun rooms() : List<FloorAreas> {
         return withContext(Dispatchers.IO) {
             client.get(Routes.CLICKABLE_AREAS).body()
         }
     }
 
 
-    fun getAllClassRooms() : Map<String, String> = list
+    private fun fillFloors() {
+
+        floorAreas.forEach { floor ->
+            Floors.floors[floor.num] =
+                Floors(
+                    floor.num.resource,
+                    floor.rooms.map { room ->
+                        AreaInfoItem(RoutePoint(room.name, room.label), room.points.map{ PointF(it.first, it.second) })
+                    }
+                )
+        }
+
+    }
+
+    fun getAllClassRooms() : List<RoutePoint> {
+        val m = mutableListOf<RoutePoint>()
+        floorAreas.map {
+
+            it.rooms.map { room ->
+                //m[room.name] = room.label
+                m.add(RoutePoint(room.name, room.label))
+            }
+
+        }
+        return m.toList()
+    }
+
 
     fun getAlgorithmData(): Map<String, List<String>> = algorithmData
 
     fun getAllPointsCoordinates(): Map<String, Pair<Float, Float>> = pointsCoord
-
-    fun getClicableAreas(): Map<String, List<Pair<Float, Float>>> = rooms
 
     fun getPointCoordinates(point: String): Pair<Float, Float>? = pointsCoord[point]
 

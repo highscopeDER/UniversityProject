@@ -23,6 +23,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toTopOf="@id/cardView"
             app:icon="@drawable/ic_settings"
+            android:visibility="gone"
             />
 
         <Button
@@ -33,6 +34,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toTopOf="@id/settingsButton"
             app:icon="@drawable/ic_question"
+            android:visibility="gone"
             />
 
         <Button
@@ -43,6 +45,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toTopOf="@id/questionButton"
             app:icon="@drawable/selectorer"
+            android:visibility="gone"
             />
 
 

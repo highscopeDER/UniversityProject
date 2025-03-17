@@ -2,44 +2,55 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:layout_behavior="@string/bottom_sheet_behavior"
+    android:paddingBottom="32dp"
+    >
 
 
     <TextView
         android:id="@+id/tv"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/toStart"
         android:text="AAAA"
-        android:textSize="26sp"
+        android:textSize="36sp"
         android:gravity="center_horizontal"
-        android:layout_marginBottom="56dp"
+        android:layout_marginBottom="48dp"
+        android:layout_marginTop="16dp"
         />
 
-    <Button
+    <android.widget.Button
         android:id="@+id/toStart"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
 
-        android:text="to start"
+        android:text="Отсюда"
 
         app:layout_constraintTop_toBottomOf="@id/tv"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/toEnd"
         app:layout_constraintWidth_percent="0.3"
-
+        android:background="@drawable/button_bg"
+        android:backgroundTint="@color/black"
+        android:drawableTint="@color/black"
+        android:foregroundTint="@color/black"
+        android:layout_marginVertical="96dp"
         />
 
-    <Button
+    <android.widget.Button
         android:id="@+id/toEnd"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
 
-        android:text="to end"
-
+        android:text="Сюда"
+        android:background="@drawable/button_bg"
         app:layout_constraintWidth_percent="0.3"
         app:layout_constraintTop_toBottomOf="@id/tv"
         app:layout_constraintStart_toEndOf="@id/toStart"
         app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginVertical="96dp"
 
         />
 

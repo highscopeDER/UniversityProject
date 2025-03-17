@@ -7,11 +7,9 @@ import android.view.View.GONE
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.universityproject.databinding.FragmentRouteViewerBinding
-import com.example.universityproject.model.getSpecifiedCoordinates
 import com.example.universityproject.model.wtf
 import com.example.universityproject.route.RouteStep
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_COLLAPSED
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
 
 class RouteViewerFragment (

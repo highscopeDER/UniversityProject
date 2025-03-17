@@ -5,10 +5,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.universityproject.databinding.SecondaryListViewItemBinding
+import com.example.universityproject.model.RoutePoint
 
 class SecondListViewAdapter(
-    private val data: List<Pair<String, String>>,
-    val itemOnClick: (Pair<String, String>) -> Unit
+    private val data: List<Pair<RoutePoint, RoutePoint>>,
+    val itemOnClick: (Pair<RoutePoint, RoutePoint>) -> Unit
 )
     : RecyclerView.Adapter<SecondListViewAdapter.ViewHolder>() {
 
@@ -19,15 +20,13 @@ class SecondListViewAdapter(
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view){
 
         var viewHolderBinding: SecondaryListViewItemBinding
+        lateinit var items: Pair<RoutePoint, RoutePoint>
 
         init {
             viewHolderBinding = SecondaryListViewItemBinding.bind(view)
             viewHolderBinding.root.setOnClickListener{
                 itemOnClick(
-                    Pair(
-                        viewHolderBinding.start.text.toString(),
-                        viewHolderBinding.end.text.toString()
-                    )
+                   items
                 )
 
             }
@@ -44,15 +43,16 @@ class SecondListViewAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
-        holder.viewHolderBinding.start.text = actualData[position].first
-        holder.viewHolderBinding.end.text = actualData[position].second
+        holder.viewHolderBinding.start.text = actualData[position].first.label
+        holder.viewHolderBinding.end.text = actualData[position].second.label
+        holder.items = Pair(actualData[position].first, actualData[position].second)
 
     }
 
     fun filterData(query: String?) {
         if (query != null) {
             actualData = data.filter {
-                it.first.contains(query) or it.second.contains(query)
+                it.first.label.contains(query) or it.second.label.contains(query)
             }
         }
         notifyDataSetChanged()

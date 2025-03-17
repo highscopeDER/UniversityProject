@@ -61,7 +61,7 @@ class Dijkstra () {
 
     fun buildGraph(){
 
-        pointsList = API.dbApi.getAllClassRooms()
+        pointsList = API.dbApi.getAllClassRooms().associate { it.name to it.label }
         data = API.dbApi.getAlgorithmData()
         coordinates = API.dbApi.getAllPointsCoordinates()
 
@@ -94,12 +94,12 @@ class Dijkstra () {
 
         var path: List<String> = useDijkstra(
             graph,
-            s!!,
-            e!!
+            startPoint,
+            endPoint
         )
 
         if (path.first() != s || path.last() != e) {
-            path = useDijkstra(graph, e, s)
+            path = useDijkstra(graph, endPoint, startPoint)
             path = path.reversed()
         }
 

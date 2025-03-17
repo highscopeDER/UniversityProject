@@ -7,10 +7,11 @@ import android.util.AttributeSet
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.applyCanvas
 import androidx.core.graphics.drawable.toBitmap
-import com.example.universityproject.model.AreaInfoItem
-import com.example.universityproject.model.ClickableArea
-import com.example.universityproject.model.ClickableAreasList
-import com.example.universityproject.model.Floors
+import com.example.universityproject.screens.map.clickable.AreaInfoItem
+import com.example.universityproject.screens.map.clickable.ClickableArea
+import com.example.universityproject.screens.map.clickable.ClickableAreasList
+import com.example.universityproject.model.floors.Floors
+import com.example.universityproject.model.RoutePoint
 import com.example.universityproject.model.makeClickablePath
 import com.ortiz.touchview.TouchImageView
 
@@ -21,7 +22,7 @@ class MapView(
 
     private var floorMap: Bitmap = drawable.toBitmap()
     private lateinit var outputBitmap: Bitmap
-    lateinit var pathEdgesSetter: Pair<(item: String) -> Unit, (item: String) -> Unit>
+    lateinit var pathEdgesSetter: Pair<(item: RoutePoint) -> Unit, (item: RoutePoint) -> Unit>
     private val clickableAreas = ClickableAreasList(context)
 
     override fun onDraw(canvas: Canvas) {
@@ -36,6 +37,7 @@ class MapView(
         super.onDraw(canvas)
     }
 
+
     fun updateFloor(floor: Floors) {
         floorMap = ResourcesCompat.getDrawable(resources, floor.res, null)!!.toBitmap()
         clickableAreas.loadListOfAreas(
@@ -48,7 +50,7 @@ class MapView(
         areas.map {
             ClickableArea(
                 it.points.makeClickablePath(floorMap.width.toFloat(), floorMap.height.toFloat()),
-                it.name,
+                it.point,
                 it.icon,
                 context,
                 pathEdgesSetter,

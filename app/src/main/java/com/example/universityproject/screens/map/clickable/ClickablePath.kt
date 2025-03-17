@@ -1,4 +1,4 @@
-package com.example.universityproject.model
+package com.example.universityproject.screens.map.clickable
 
 import android.graphics.Path
 import android.graphics.PointF

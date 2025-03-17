@@ -15,7 +15,7 @@
         <!-- Customize your theme here. -->
         <item name="android:windowSplashScreenBackground">#EAEAEA</item>
         <item name="android:windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
-        <item name="android:windowSplashScreenAnimationDuration">1000</item>
+        <item name="android:windowSplashScreenAnimationDuration">2000</item>
         <item name="bottomSheetDialogTheme">@style/ThemeOverlay.App.BottomSheetDialog</item>
         <item name="android:popupMenuStyle">@style/popupmenu.style</item>
         <item name="cardViewStyle">@style/myCardViewStyle</item>

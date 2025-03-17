@@ -1,4 +1,4 @@
-package com.example.universityproject.model
+package com.example.universityproject.screens.map.clickable
 
 import android.content.Context
 import android.graphics.Canvas

@@ -2,10 +2,13 @@ package com.example.universityproject.screens.activities
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.view.ViewTreeObserver
 import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.example.universityproject.api.API.Companion.dbApi
 import com.example.universityproject.databinding.ActivityMainBinding
+import com.example.universityproject.model.floors.Floors
 import com.example.universityproject.route.RouteBuilder
 import com.example.universityproject.screens.fragments.MainFragment
 import com.example.universityproject.screens.fragments.RouteViewerFragment
@@ -18,12 +21,26 @@ class MainActivity : AppCompatActivity() {
 
     @SuppressLint("RestrictedApi")
     override fun onCreate(savedInstanceState: Bundle?) {
+        dbApi.initialize()
         applyEdgeToEdge(window, true)
+        installSplashScreen()
+
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        dbApi.initialize()
+        binding.root.viewTreeObserver.addOnPreDrawListener (
+            object : ViewTreeObserver.OnPreDrawListener {
+                override fun onPreDraw(): Boolean {
+                    return if(Floors.floors.isNotEmpty()) {
+                        binding.root.viewTreeObserver.removeOnPreDrawListener(this)
+                        true
+                    } else {
+                        false
+                    }
+                }
+            }
+        )
+        println("activity started")
         RouteBuilder.resources = resources
         fmanager.beginTransaction().apply {
             replace(
@@ -39,7 +56,6 @@ class MainActivity : AppCompatActivity() {
 
             commit()
         }
-
 
        onBackPressedDispatcher.addCallback(this) {
            if(fmanager.backStackEntryCount > 1) {
