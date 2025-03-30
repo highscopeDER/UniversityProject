@@ -1,6 +1,7 @@
 package com.example.universityproject.screens.map.clickable
 
 import android.content.Context
+import android.content.res.Resources
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.PointF
@@ -9,19 +10,18 @@ import android.graphics.PorterDuffXfermode
 import android.graphics.Rect
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.toRect
+import com.example.domain.models.RoutePoint
 import com.example.universityproject.R
-import com.example.universityproject.model.RoutePoint
-import com.example.universityproject.route.RouteBuilder.Companion.resources
 import com.example.universityproject.screens.bottomsheet.clickableAreaSelectionBottomSheetFragment.ClickableAreaSelectionBottomSheetDialog
+import com.example.universityproject.screens.map.PathEdgesSetter
 
 data class ClickableArea(
     val path: ClickablePath,
-    //val label: String,
     val point: RoutePoint,
-
     val iconRes: Int?,
     val context: Context,
-    val pathEdgesSetter: Pair<(item: RoutePoint) -> Unit, (item: RoutePoint) -> Unit>,
+    val resources: Resources,
+    val pathEdgesSetter: PathEdgesSetter,
     val bottomSheetOnDismiss: () -> Unit,
     val onClick: () -> Unit
 ) {
@@ -86,7 +86,6 @@ data class ClickableArea(
     }
 
     private fun showSelectionFragment(){
-
         bottomSheet.show()
     }
 

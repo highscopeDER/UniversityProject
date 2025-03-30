@@ -4,14 +4,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".screens.activities.MainActivity">
+    tools:context=".MainActivity">
 
-    <FrameLayout
+
+
+    <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragmentContainer"
+        android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="24dp"
+        app:defaultNavHost="true"
+        app:navGraph="@navigation/nav"
         />
+
+
 
 
 

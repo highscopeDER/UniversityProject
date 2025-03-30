@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager.LayoutParams.FLAG_DIM_BEHIND
 import com.example.universityproject.databinding.RouteViewerBottomSheetFragmentBinding
-import com.example.universityproject.route.RouteStep
+import com.example.universityproject.screens.fragments.ZoomSpec
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
@@ -85,5 +85,15 @@ class RouteViewerBottomSheet(
 
         showStep(currentStep.bitmap)
     }
+
+}
+
+data class RouteStep (
+    val bitmap: Bitmap,
+    val floorInfo: String,
+    val description: String,
+
+) {
+    fun getZoomSpec(): ZoomSpec = ZoomSpec(1f, 1f, 1f)
 
 }

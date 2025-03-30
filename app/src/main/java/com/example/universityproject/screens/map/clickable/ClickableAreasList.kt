@@ -1,10 +1,9 @@
 package com.example.universityproject.screens.map.clickable
 
-import android.content.Context
 import android.graphics.Canvas
 import android.graphics.PointF
 
-class ClickableAreasList(context: Context) {
+class ClickableAreasList {
 
     private val list: MutableList<ClickableArea> = mutableListOf()
 

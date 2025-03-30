@@ -5,27 +5,33 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.universityproject.api.API.Companion.dbApi
+import com.example.domain.models.RoutePoint
 import com.example.universityproject.databinding.BottomSheetFragmentBinding
-import com.example.universityproject.model.RoutePoint
+import com.example.universityproject.screens.viewModels.MainFragmentViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class MainBottomSheetFragment(
-    private val onItemSelected: (item: RoutePoint) -> Unit,
-    private val onRouteSelected: (start: RoutePoint, end: RoutePoint) -> Unit,
+    private val start: Boolean,
+    private val classrooms: List<RoutePoint>
 ) : BottomSheetDialogFragment() {
 
     private lateinit var binding: BottomSheetFragmentBinding
     private var mainList: List<RoutePoint> = listOf()
 
+    private val viewModel by viewModels<MainFragmentViewModel>({ requireActivity() })
+
     private val mainListOnClick: (param: RoutePoint) -> Unit = {
-        onItemSelected(it)
+        if (start) viewModel.setStartPoint(it) else viewModel.setEndPoint(it)
         dismiss()
     }
 
     private val secondListOnClick: (param: Pair<RoutePoint, RoutePoint>) -> Unit = {
-        onRouteSelected(it.first, it.second)
+        viewModel.apply {
+            setStartPoint(it.first)
+            setEndPoint(it.second)
+        }
         dismiss()
     }
 
@@ -41,23 +47,23 @@ class MainBottomSheetFragment(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val secondaryListData: List<Pair<String, String>> = listOf(
-            Pair("8304", "8308"),
-            Pair("8301", "8308"),
-            Pair("8408", "8316"),
-            Pair("8104", "8208"),
-            Pair("8501", "8318"),
-            Pair("8108", "8116"),
-            Pair("8104", "8208"),
-            Pair("8501", "8318"),
-            Pair("8108", "8116")
-        )
-
         val secondaryListMap: List<Pair<RoutePoint, RoutePoint>> = listOf(
-            RoutePoint("h3039", "8304") to RoutePoint("h3031", "8308"),
-            RoutePoint("h3049", "8301") to RoutePoint("h3031", "8308"),
-            RoutePoint("h4025", "8408") to RoutePoint("h3017", "8316"),
-            RoutePoint("h1035", "8108") to RoutePoint("h5003", "8501")
+            RoutePoint("h3039", "8304") to RoutePoint(
+                "h3031",
+                "8308"
+            ),
+            RoutePoint("h3049", "8301") to RoutePoint(
+                "h3031",
+                "8308"
+            ),
+            RoutePoint("h4025", "8408") to RoutePoint(
+                "h3017",
+                "8316"
+            ),
+            RoutePoint("h1035", "8108") to RoutePoint(
+                "h5003",
+                "8501"
+            )
         )
 
         val secondListAdapter = SecondListViewAdapter(secondaryListMap, secondListOnClick)
@@ -67,8 +73,8 @@ class MainBottomSheetFragment(
             adapter = secondListAdapter
         }
 
-        mainList = dbApi.getAllClassRooms()
-        val mainListAdapter = FirstListViewAdapter(mainList, mainListOnClick)
+        //mainList = dbApi.getAllClassRooms()
+        val mainListAdapter = FirstListViewAdapter(classrooms, mainListOnClick)
 
         binding.mainListView.apply {
             layoutManager = LinearLayoutManager(binding.root.context, LinearLayoutManager.VERTICAL, false)

@@ -4,86 +4,69 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
+import android.view.View.GONE
+import android.view.View.INVISIBLE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.PopupMenu
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
+import com.example.domain.models.Route
 import com.example.universityproject.R
 import com.example.universityproject.databinding.FragmentMainBinding
-import com.example.universityproject.model.floors.Floors
-import com.example.universityproject.model.RoutePoint
-import com.example.universityproject.route.RouteBuilder
-import com.example.universityproject.screens.bottomsheet.mainBottomSheetFragment.MainBottomSheetFragment
+import com.example.universityproject.screens.viewModels.MainFragmentViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.encoding.Encoder
+import kotlinx.serialization.json.Json
 
-class MainFragment(
-    private val enterRouteViewer: (RouteViewerFragment) -> Unit,
-    private val exitRouteViewer: () -> Unit
-) : Fragment(){
+@AndroidEntryPoint
+class MainFragment: BaseFragment(){
+
+    private val viewModel by viewModels<MainFragmentViewModel>({requireActivity()})
 
     private lateinit var binding: FragmentMainBinding
 
-    private var startPoint: RoutePoint? = null
-    private var endPoint: RoutePoint? = null
-
-    private val startPointSetter: (point: RoutePoint) -> Unit = {
-        startPoint = it
-        updateUI()
-    }
-
-    private val endPointSetter: (point: RoutePoint) -> Unit = {
-        endPoint = it
-        updateUI()
-    }
-
-    private val routeSetter: (start: RoutePoint, end: RoutePoint) -> Unit = { s, e ->
-        startPoint = s
-        endPoint = e
-        updateUI()
-    }
-
-    private lateinit var fmanager: FragmentManager
+    private val fManager: FragmentManager by lazy { requireActivity().supportFragmentManager }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentMainBinding.inflate(layoutInflater)
-        // Inflate the layout for this fragment
-        fmanager = requireActivity().supportFragmentManager
-        binding.touchImageView.pathEdgesSetter = Pair(startPointSetter, endPointSetter)
+
+        subscribeOnViewModel()
 
         return binding.root
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.switchRouteTypeButton.setOnClickListener {
-            it.isActivated = !it.isActivated
-        }
-
-        while(Floors.floors.isEmpty()) {
-
-        }
-
-         binding.touchImageView.apply {
+        binding.touchImageView.apply {
              minZoom = 0.1f
              maxZoom = 5f
              setZoom(0.2f)
 
-             updateFloor(Floors.floors[1]!!)
-            }
+             //Floors.floors[1]?.let { updateFloor(it) }
+        }
 
         binding.pickStartButton.setOnClickListener {
-           showBottomSheet(startPointSetter)
-
-        }
+          viewModel.showBottomSheet(fManager, true)
+       }
 
         binding.pickEndButton.setOnClickListener {
-            showBottomSheet(endPointSetter)
+            viewModel.showBottomSheet(fManager, false)
         }
-
 
         binding.touchImageView.setOnTouchListener { _, event ->
 
@@ -95,59 +78,12 @@ class MainFragment(
             true
         }
 
-        val menuOnClick: View.OnClickListener = View.OnClickListener {
-            showPopupMenu(binding.menuView.dropDownIcon)
+        setMenuViewOnClickListener { viewModel.showPopUpMenu() }
+
+        binding.errorButton.setOnClickListener {
+            viewModel.loadFloors()
         }
 
-        binding.menuView
-            .apply {
-                textViewBuilding.setOnClickListener(menuOnClick)
-                textViewFloor.setOnClickListener(menuOnClick)
-                dropDownIcon.setOnClickListener(menuOnClick)
-            }
-    }
-
-    override fun onPause() {
-        super.onPause()
-        clearInput()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        binding.touchImageView.updateFloor(Floors.floors[1]!!)
-        println("fragment resume")
-    }
-
-
-    private fun updateUI() {
-        binding.pickStartButton.text = startPoint?.label
-        binding.pickEndButton.text = endPoint?.label
-
-        if (startPoint != null && endPoint != null) {
-            enterRouteViewer(
-                RouteViewerFragment(
-                    exitRouteViewer,
-                    RouteBuilder.buildRoute(startPoint!!, endPoint!!)
-                )
-            )
-        }
-    }
-
-    private fun clearInput(){
-        startPoint = null
-        endPoint = null
-        updateUI()
-    }
-
-
-    private fun showBottomSheet(pointSetter: (item: RoutePoint) -> Unit) {
-        if (activity != null) {
-            MainBottomSheetFragment(
-                onItemSelected = pointSetter,
-                onRouteSelected = routeSetter
-            )
-                .show(fmanager, null)
-        }
     }
 
     private fun showPopupMenu(anchor: View?) {
@@ -156,39 +92,18 @@ class MainFragment(
                 .apply {
                     inflate(R.menu.popup_menu)
                     setOnMenuItemClickListener { item ->
-                        val floor: Floors =
+                        val floorNum: Int =
                         when (item) {
-                            this.menu.findItem(R.id.floor1) -> {
-                                binding.menuView.textViewFloor.text = "Этаж 1"
-                                Floors.floors[1]!!
-                            }
+                            this.menu.findItem(R.id.floor1) -> 1
+                            this.menu.findItem(R.id.floor2) -> 2
+                            this.menu.findItem(R.id.floor3) -> 3
+                            this.menu.findItem(R.id.floor4) -> 4
+                            this.menu.findItem(R.id.floor5) -> 5
 
-                            this.menu.findItem(R.id.floor2) -> {
-                                binding.menuView.textViewFloor.text = "Этаж 2"
-                                Floors.floors[2]!!
-                            }
-
-                            this.menu.findItem(R.id.floor3) -> {
-                                binding.menuView.textViewFloor.text = "Этаж 3"
-                                Floors.floors[3]!!
-                            }
-
-                            this.menu.findItem(R.id.floor4) -> {
-                                binding.menuView.textViewFloor.text = "Этаж 4"
-                                Floors.floors[4]!!
-                            }
-
-                            this.menu.findItem(R.id.floor5) -> {
-                                binding.menuView.textViewFloor.text = "Этаж 5"
-                                Floors.floors[5]!!
-                            }
-
-                            else -> {
-                                Floors.floors[1]!!
-                            }
+                            else -> 1
                         }
 
-                        binding.touchImageView.updateFloor(floor)
+                        viewModel.setFloor(floorNum, "Этаж $floorNum")
 
                         when(item.groupId) {
                             R.id.buildingMenu -> {
@@ -204,4 +119,86 @@ class MainFragment(
                 }
     }
 
+    private fun subscribeOnViewModel() {
+
+        binding.touchImageView.pathEdgesSetter = viewModel.pathEdgesSetter
+
+
+
+        viewModel.navigateToRouteViewer.subscribe {
+            findNavController().navigate(MainFragmentDirections.mainToRouteViewer(route = it.encodeToString()))
+        }
+
+        viewModel.startPoint.subscribe {
+            binding.pickStartButton.text = it?.label
+        }
+
+
+        viewModel.endPoint.subscribe {
+            binding.pickEndButton.text = it?.label
+        }
+
+        viewModel.currentFloor.subscribe {
+            when(it) {
+
+                MainFragmentViewModel.FloorState.Empty ->  {
+                    viewModel.loadFloors()
+                }
+
+                MainFragmentViewModel.FloorState.Loading -> showProgressBar()
+
+                is MainFragmentViewModel.FloorState.Error -> {
+                    binding.errorTextView.text = it.msg
+                    showError()
+                }
+
+                is MainFragmentViewModel.FloorState.Showing -> {
+                    binding.touchImageView.updateFloor(it.floor)
+                    showMap()
+                }
+            }
+            //if (it.enum != 0) binding.touchImageView.updateFloor(it)
+        }
+
+        viewModel.popUpMenu.subscribe {
+            showPopupMenu(binding.menuView.dropDownIcon)
+        }
+
+        viewModel.currentFloorText.subscribe {
+            binding.menuView.textViewFloor.text = it
+        }
+
+
+    }
+
+    private fun showProgressBar() {
+        binding.progressBar.visibility = VISIBLE
+        binding.mainGroup.visibility = INVISIBLE
+        binding.errorGroup.visibility = GONE
+    }
+
+    private fun showMap() {
+        binding.progressBar.visibility = GONE
+        binding.mainGroup.visibility = VISIBLE
+        binding.errorGroup.visibility = GONE
+    }
+
+    private fun showError() {
+        binding.progressBar.visibility = GONE
+        binding.mainGroup.visibility = INVISIBLE
+        binding.errorGroup.visibility = VISIBLE
+    }
+
+    private fun setMenuViewOnClickListener(onClick: () -> Unit) {
+        binding.menuView
+            .apply {
+                textViewBuilding.setOnClickListener{ onClick() }
+                textViewFloor.setOnClickListener{ onClick() }
+                dropDownIcon.setOnClickListener{ onClick() }
+            }
+    }
+
+
+
 }
+

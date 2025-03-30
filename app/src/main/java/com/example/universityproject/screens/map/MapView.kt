@@ -3,16 +3,16 @@ package com.example.universityproject.screens.map
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.PointF
 import android.util.AttributeSet
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.applyCanvas
 import androidx.core.graphics.drawable.toBitmap
-import com.example.universityproject.screens.map.clickable.AreaInfoItem
+import com.example.domain.models.Floor
+import com.example.universityproject.model.resource
 import com.example.universityproject.screens.map.clickable.ClickableArea
 import com.example.universityproject.screens.map.clickable.ClickableAreasList
-import com.example.universityproject.model.floors.Floors
-import com.example.universityproject.model.RoutePoint
-import com.example.universityproject.model.makeClickablePath
+import com.example.universityproject.screens.map.clickable.ClickablePath
 import com.ortiz.touchview.TouchImageView
 
 class MapView(
@@ -22,8 +22,8 @@ class MapView(
 
     private var floorMap: Bitmap = drawable.toBitmap()
     private lateinit var outputBitmap: Bitmap
-    lateinit var pathEdgesSetter: Pair<(item: RoutePoint) -> Unit, (item: RoutePoint) -> Unit>
-    private val clickableAreas = ClickableAreasList(context)
+    lateinit var pathEdgesSetter: PathEdgesSetter
+    private val clickableAreas = ClickableAreasList()
 
     override fun onDraw(canvas: Canvas) {
 
@@ -32,33 +32,26 @@ class MapView(
         outputBitmap.applyCanvas {
             clickableAreas.draw(this)
         }
+
         setImageBitmap(outputBitmap)
 
         super.onDraw(canvas)
     }
 
 
-    fun updateFloor(floor: Floors) {
-        floorMap = ResourcesCompat.getDrawable(resources, floor.res, null)!!.toBitmap()
+    fun updateFloor(floor: Floor) {
+        floorMap = ResourcesCompat.getDrawable(resources, floor.enum.resource, null)!!.toBitmap()
         clickableAreas.loadListOfAreas(
-            loadClickableObjects(floor.areasInfo)
+            floor.getClickableAreas(
+                context,
+                floorMap.width.toFloat(),
+                floorMap.height.toFloat(),
+                pathEdgesSetter,
+                { clickableAreas.unselectAll() }
+            )
         )
         invalidate()
     }
-    
-    private fun loadClickableObjects(areas: List<AreaInfoItem>): List<ClickableArea> =
-        areas.map {
-            ClickableArea(
-                it.points.makeClickablePath(floorMap.width.toFloat(), floorMap.height.toFloat()),
-                it.point,
-                it.icon,
-                context,
-                pathEdgesSetter,
-                {clickableAreas.unselectAll()}
-            ) {
-                clickableAreas.unselectAll()
-            }
-        }
 
     override fun performClick(): Boolean {
         return super.performClick()
@@ -70,6 +63,41 @@ class MapView(
         invalidate()
     }
 
+    private fun Floor.getClickableAreas (
+        context: Context,
+        mapWidth: Float,
+        mapHeight: Float,
+        pathEdgesSetter: PathEdgesSetter,
+        unit: () -> Unit
+    ): List<ClickableArea> =
+        areasInfo.map {
+            ClickableArea(
+                ClickablePath(it.points.map { p -> getSpecifiedCoordinates(PointF(p.first, p.second), mapWidth, mapHeight) }),
+                it.point,
+                it.icon,
+                context,
+                resources,
+                pathEdgesSetter,
+                { unit() },
+                { unit() }
+            )
+        }
+
+    private fun Floor.getSpecifiedCoordinates(p: PointF, mapWidth: Float, mapHeight: Float): PointF {
+        val length = bounds.first
+        val height = bounds.second
+
+        val x_percent = p.x / length
+        val y_percent = (height - p.y) / height
+
+        return PointF(
+            mapWidth * x_percent,
+            mapHeight * y_percent
+        )
+    }
+
 }
+
+
 
 

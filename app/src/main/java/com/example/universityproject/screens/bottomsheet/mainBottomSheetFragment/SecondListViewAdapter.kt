@@ -5,7 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.universityproject.databinding.SecondaryListViewItemBinding
-import com.example.universityproject.model.RoutePoint
+import com.example.domain.models.RoutePoint
 
 class SecondListViewAdapter(
     private val data: List<Pair<RoutePoint, RoutePoint>>,
