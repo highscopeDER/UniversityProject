@@ -62,7 +62,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="matrix"
-        app:srcCompat="@drawable/test"
+        app:srcCompat="@drawable/floor1"
          />
 
         <Button
