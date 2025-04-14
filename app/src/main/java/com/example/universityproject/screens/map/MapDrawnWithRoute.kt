@@ -15,8 +15,6 @@ import androidx.core.graphics.drawable.toBitmap
 import com.example.domain.models.FloorsEnum
 import com.example.domain.models.PointPosition
 import com.example.universityproject.model.resource
-import com.example.universityproject.screens.fragments.ZoomSpec
-import com.example.universityproject.screens.viewModels.MainFragmentViewModel
 import com.ortiz.touchview.TouchImageView
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlin.math.min
@@ -33,7 +31,14 @@ class MapDrawnWithRoute(context: Context, attributeSet: AttributeSet) : TouchIma
 
     private val pathBounds = RectF()
 
+    init {
+        minZoom = 1f
+        maxZoom = 5f
+        println("mapview init")
+    }
+
     override fun onDraw(canvas: Canvas) {
+
 
 
         if (floorMap.value is FloorState.Floor ) {
@@ -45,12 +50,13 @@ class MapDrawnWithRoute(context: Context, attributeSet: AttributeSet) : TouchIma
             }
 
             setImageBitmap(outputBitmap)
-            setZoom(pathBounds)
-        }
 
+        }
 
         super.onDraw(canvas)
     }
+
+
 
     fun updateFloor(floor: FloorsEnum, pathPoints: List<PointPosition>) {
         floorMap.value = FloorState.Floor(ResourcesCompat.getDrawable(resources, floor.resource, null)!!.toBitmap())
@@ -72,9 +78,8 @@ class MapDrawnWithRoute(context: Context, attributeSet: AttributeSet) : TouchIma
                 }
                 lineTo(p.x, p.y)
             }
-        }
-
-        path.computeBounds(pathBounds, true)
+        }.computeBounds(pathBounds, true)
+        setZoom(pathBounds)
 
     }
 
@@ -107,8 +112,10 @@ class MapDrawnWithRoute(context: Context, attributeSet: AttributeSet) : TouchIma
         val fX = bounds.centerX() / w
         val fY = bounds.centerY() / h
 
-        setZoom(min(sX, sY) / 10, fX, fY)
+        setZoom(min(sX, sY) * 0.9f, fX, fY)
+
     }
+
 
     sealed class FloorState{
         data object Empty: FloorState()

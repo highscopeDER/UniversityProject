@@ -62,7 +62,6 @@ class ApiDataSource {
         }
     }
 
-
     fun makeFloorsRequest() : Flow<Floors> = request {
         Floors(
             rooms().associate { floor ->

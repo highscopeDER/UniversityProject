@@ -25,6 +25,13 @@ class MapView(
     lateinit var pathEdgesSetter: PathEdgesSetter
     private val clickableAreas = ClickableAreasList()
 
+    init {
+        minZoom = 1f
+        maxZoom = 5f
+        setZoom(1f)
+        doubleTapScale = 1f
+    }
+
     override fun onDraw(canvas: Canvas) {
 
         outputBitmap = floorMap.copy(Bitmap.Config.ARGB_8888, true)
@@ -36,6 +43,10 @@ class MapView(
         setImageBitmap(outputBitmap)
 
         super.onDraw(canvas)
+    }
+
+    override fun performClick(): Boolean {
+        return super.performClick()
     }
 
 
@@ -50,11 +61,8 @@ class MapView(
                 { clickableAreas.unselectAll() }
             )
         )
-        invalidate()
-    }
 
-    override fun performClick(): Boolean {
-        return super.performClick()
+        invalidate()
     }
 
     fun checkClick(x: Float, y: Float) {

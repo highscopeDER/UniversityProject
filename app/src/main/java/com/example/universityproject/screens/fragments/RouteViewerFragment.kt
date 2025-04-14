@@ -10,7 +10,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.domain.models.Route
 import com.example.universityproject.databinding.FragmentRouteViewerBinding
-import com.example.universityproject.model.resource
 import com.example.universityproject.screens.viewModels.RouteViewerViewModel
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
@@ -33,11 +32,6 @@ class RouteViewerFragment(): BaseFragment() {
             Route.decodeFromString(args.route)
         )
 
-        binding.mapView.apply {
-            minZoom = 0.1f
-            maxZoom = 1f
-            setZoom(0.2f)
-        }
 
         BottomSheetBehavior.from(binding.bottomSheet).apply {
             peekHeight = 300

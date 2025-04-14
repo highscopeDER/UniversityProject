@@ -9,25 +9,13 @@ import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.PopupMenu
-import androidx.core.os.bundleOf
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import com.example.domain.models.Route
 import com.example.universityproject.R
 import com.example.universityproject.databinding.FragmentMainBinding
 import com.example.universityproject.screens.viewModels.MainFragmentViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.encoding.Encoder
-import kotlinx.serialization.json.Json
 
 @AndroidEntryPoint
 class MainFragment: BaseFragment(){
@@ -52,14 +40,6 @@ class MainFragment: BaseFragment(){
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.touchImageView.apply {
-             minZoom = 0.1f
-             maxZoom = 5f
-             setZoom(0.2f)
-
-             //Floors.floors[1]?.let { updateFloor(it) }
-        }
-
         binding.pickStartButton.setOnClickListener {
           viewModel.showBottomSheet(fManager, true)
        }
@@ -70,13 +50,18 @@ class MainFragment: BaseFragment(){
 
         binding.touchImageView.setOnTouchListener { _, event ->
 
+            println("touch event: ${event.action}")
             if (event.action != MotionEvent.ACTION_MOVE && event.action != MotionEvent.ACTION_UP) {
+
+                println("touch")
                 binding.touchImageView.checkClick(event.x, event.y)
                 binding.touchImageView.performClick()
             }
 
             true
         }
+
+
 
         setMenuViewOnClickListener { viewModel.showPopUpMenu() }
 
