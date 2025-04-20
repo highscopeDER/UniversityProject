@@ -12,6 +12,7 @@ import android.widget.PopupMenu
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.example.domain.models.FloorsEnum
 import com.example.universityproject.R
 import com.example.universityproject.databinding.FragmentMainBinding
 import com.example.universityproject.screens.viewModels.MainFragmentViewModel
@@ -37,6 +38,8 @@ class MainFragment: BaseFragment(){
         return binding.root
     }
 
+
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -50,12 +53,13 @@ class MainFragment: BaseFragment(){
 
         binding.touchImageView.setOnTouchListener { _, event ->
 
-            println("touch event: ${event.action}")
-            if (event.action != MotionEvent.ACTION_MOVE && event.action != MotionEvent.ACTION_UP) {
+            if (event.classification != MotionEvent.CLASSIFICATION_PINCH) when (event.action) {
 
-                println("touch")
-                binding.touchImageView.checkClick(event.x, event.y)
-                binding.touchImageView.performClick()
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                    binding.touchImageView.checkClick(event.x, event.y)
+                    binding.touchImageView.performClick()
+                }
+
             }
 
             true
@@ -77,28 +81,33 @@ class MainFragment: BaseFragment(){
                 .apply {
                     inflate(R.menu.popup_menu)
                     setOnMenuItemClickListener { item ->
-                        val floorNum: Int =
-                        when (item) {
-                            this.menu.findItem(R.id.floor1) -> 1
-                            this.menu.findItem(R.id.floor2) -> 2
-                            this.menu.findItem(R.id.floor3) -> 3
-                            this.menu.findItem(R.id.floor4) -> 4
-                            this.menu.findItem(R.id.floor5) -> 5
+                        val floorNum: FloorsEnum = when (item) {
 
-                            else -> 1
+                            this.menu.findItem(R.id.h1) -> FloorsEnum.H1
+                            this.menu.findItem(R.id.h2) -> FloorsEnum.H2
+                            this.menu.findItem(R.id.h3) -> FloorsEnum.H3
+                            this.menu.findItem(R.id.h4) -> FloorsEnum.H4
+                            this.menu.findItem(R.id.h5) -> FloorsEnum.H5
+
+                            this.menu.findItem(R.id.a0) -> FloorsEnum.A0
+                            this.menu.findItem(R.id.a1) -> FloorsEnum.A1
+                            this.menu.findItem(R.id.a2) -> FloorsEnum.A2
+                            this.menu.findItem(R.id.a3) -> FloorsEnum.A3
+                            this.menu.findItem(R.id.a4) -> FloorsEnum.A4
+                            this.menu.findItem(R.id.a5) -> FloorsEnum.A5
+                            this.menu.findItem(R.id.a6) -> FloorsEnum.A6
+
+                            this.menu.findItem(R.id.j1) -> FloorsEnum.J1
+                            this.menu.findItem(R.id.j2) -> FloorsEnum.J2
+                            this.menu.findItem(R.id.j3) -> FloorsEnum.J3
+                            this.menu.findItem(R.id.j4) -> FloorsEnum.J4
+
+                            else -> {FloorsEnum.A0}
                         }
 
-                        viewModel.setFloor(floorNum, "Этаж $floorNum")
+                        viewModel.setFloor(floorNum)
 
-                        when(item.groupId) {
-                            R.id.buildingMenu -> {
-                                binding.menuView.textViewBuilding.text = "Корпус 8"
-                                true
-                            }
-                            else -> {
-                                false
-                            }
-                        }
+                        true
                     }
                     show()
                 }
@@ -142,7 +151,6 @@ class MainFragment: BaseFragment(){
                     showMap()
                 }
             }
-            //if (it.enum != 0) binding.touchImageView.updateFloor(it)
         }
 
         viewModel.popUpMenu.subscribe {
@@ -151,6 +159,10 @@ class MainFragment: BaseFragment(){
 
         viewModel.currentFloorText.subscribe {
             binding.menuView.textViewFloor.text = it
+        }
+
+        viewModel.currentBuildingText.subscribe {
+            binding.menuView.textViewBuilding.text = it
         }
 
 

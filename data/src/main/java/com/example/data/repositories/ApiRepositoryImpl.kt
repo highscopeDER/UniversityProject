@@ -12,7 +12,6 @@ class ApiRepositoryImpl : ApiRepository {
 
     private val api = ApiDataSource()
 
-
     override suspend fun requestClassroomsList(): Flow<Map<String, String>> = api.makeClassroomsRequest()
 
     override suspend fun requestGraphData(): Flow<GraphData> = api.makeGraphDataRequest()

@@ -9,7 +9,11 @@ class RequestRouteUseCase(
 ) {
 
     fun execute(start: RoutePoint, end: RoutePoint): Route {
+        pathFindRepository.buildRoute(start, end).routeParts.forEach { path ->
+            println(path.pathPoints.map { it.name })
+        }
         return pathFindRepository.buildRoute(start, end)
+
     }
 
 }

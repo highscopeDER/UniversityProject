@@ -61,8 +61,9 @@
         android:id="@+id/touchImageView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:src="@drawable/h1"
         android:scaleType="matrix"
-        app:srcCompat="@drawable/floor1"
+
          />
 
         <Button

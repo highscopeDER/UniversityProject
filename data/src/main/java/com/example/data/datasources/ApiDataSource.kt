@@ -66,12 +66,12 @@ class ApiDataSource {
         Floors(
             rooms().associate { floor ->
                 floor.num to Floor(
-                    floor.num.toFloorsEnum(),
+                    floor.num,
                     floor.rooms.map { room ->
                         AreaInfoItem(
                             RoutePoint(room.name, room.label),
                             room.points.map { Pair(it.first, it.second) })
-                    }
+                    },
                 )
             }
         )

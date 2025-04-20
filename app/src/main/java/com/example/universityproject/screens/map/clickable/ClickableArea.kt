@@ -3,6 +3,7 @@ package com.example.universityproject.screens.map.clickable
 import android.content.Context
 import android.content.res.Resources
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.PointF
 import android.graphics.PorterDuff
@@ -27,7 +28,7 @@ data class ClickableArea(
 ) {
 
     private var selected: Boolean = false
-    private val mode = PorterDuffXfermode(PorterDuff.Mode.DST_OVER)
+    private val mode = PorterDuffXfermode(PorterDuff.Mode.SRC_OVER)
     private val colorSelected = resources.getColor(R.color.color_selected, null)
     private val colorUnselected = resources.getColor(R.color.color_unselected, null)
     private val bottomSheet = ClickableAreaSelectionBottomSheetDialog(context, pathEdgesSetter, point, bottomSheetOnDismiss)
@@ -46,12 +47,23 @@ data class ClickableArea(
 
     }
 
+    private val textPaint = Paint().apply {
+        color = Color.BLACK
+        textSize = 24f
+        textAlign = Paint.Align.CENTER
+        isFakeBoldText = true
+        isLinearText = true
+
+    }
+
     fun dispatchDrawing(canvas: Canvas) {
         canvas
             .drawPath(
                 path,
                 if (selected) drawSelected else drawUnselected
             )
+
+        //canvas.drawText(point.label, path.bounds.centerX(), path.bounds.centerY(), textPaint)
         drawIcon(canvas)
     }
 

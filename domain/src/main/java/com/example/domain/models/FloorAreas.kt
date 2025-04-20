@@ -4,6 +4,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class FloorAreas(
-    val num: Int,
+    val num: FloorsEnum,
     val rooms: List<Room>
 )

@@ -4,7 +4,6 @@ import android.graphics.Path
 import android.graphics.PointF
 import android.graphics.RectF
 import androidx.core.graphics.contains
-import com.example.universityproject.model.getSpecifiedCoordinates
 
 class ClickablePath(l: List<PointF>) : Path() {
 

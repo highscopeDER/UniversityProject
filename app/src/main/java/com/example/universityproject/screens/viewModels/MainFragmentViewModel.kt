@@ -5,12 +5,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.example.domain.models.Floor
+import com.example.domain.models.FloorsEnum
 import com.example.domain.models.Route
 import com.example.domain.models.alias.Floors
 import com.example.domain.models.RoutePoint
 import com.example.domain.repositories.ApiRepository
 import com.example.domain.usecases.LoadUseCase
 import com.example.domain.usecases.RequestRouteUseCase
+import com.example.universityproject.model.building
+import com.example.universityproject.model.floor
 import com.example.universityproject.screens.bottomsheet.mainBottomSheetFragment.MainBottomSheetFragment
 import com.example.universityproject.screens.map.PathEdgesSetter
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -60,8 +63,11 @@ class MainFragmentViewModel @Inject constructor(
 
     private val _currentFloor: MutableStateFlow<FloorState> = MutableStateFlow(FloorState.Empty)
     private val _currentFloorText: MutableStateFlow<String> = MutableStateFlow("Этаж 1")
+    private val _currentBuildingText: MutableStateFlow<String> = MutableStateFlow("Корпус 1")
+
     val currentFloor = _currentFloor.asStateFlow()
     val currentFloorText = _currentFloorText.asStateFlow()
+    val currentBuildingText = _currentBuildingText.asStateFlow()
 
     private val _popUpMenu = MutableSharedFlow<String>()
     val popUpMenu = _popUpMenu.asSharedFlow()
@@ -76,8 +82,8 @@ class MainFragmentViewModel @Inject constructor(
             _currentFloor.value = FloorState.Loading
             loadUseCase.execute().collectLatest {
                 _floors.value = it.floors
-                _currentFloor.value = FloorState.Showing(it.floors.map.values.first())
                 _classrooms.value = it.classrooms
+                setFloor(it.floors.map.keys.first())
             }
         }
     }
@@ -88,9 +94,10 @@ class MainFragmentViewModel @Inject constructor(
         }
     }
 
-    fun setFloor(num: Int, text: String) {
+    fun setFloor(num: FloorsEnum) {
         _currentFloor.value = FloorState.Showing(floors.value.getFloor(num))
-        _currentFloorText.value = text
+        _currentFloorText.value = num.floor
+        _currentBuildingText.value = num.building
     }
 
     fun showBottomSheet(fm: FragmentManager, start: Boolean){

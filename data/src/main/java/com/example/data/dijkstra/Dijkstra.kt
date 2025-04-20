@@ -76,6 +76,7 @@ class Dijkstra () {
             val firstPoint = coordinates[it.key]
             it.value.forEach { item ->
                 val secondPoint = coordinates[item]
+
                 val a = Pair(it.key, item)
                 val b = sqrt(
                     (secondPoint!!.first - firstPoint!!.first).pow(2)
@@ -122,7 +123,8 @@ class Dijkstra () {
             }
         }
 
-            return mappedPath
+        println(mappedPath)
+        return mappedPath
     }
 }
 

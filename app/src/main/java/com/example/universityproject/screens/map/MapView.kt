@@ -5,10 +5,12 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.PointF
 import android.util.AttributeSet
+import android.view.MotionEvent
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.applyCanvas
 import androidx.core.graphics.drawable.toBitmap
 import com.example.domain.models.Floor
+import com.example.universityproject.model.bounds
 import com.example.universityproject.model.resource
 import com.example.universityproject.screens.map.clickable.ClickableArea
 import com.example.universityproject.screens.map.clickable.ClickableAreasList
@@ -20,55 +22,81 @@ class MapView(
     attributeSet: AttributeSet
     ) : TouchImageView(context, attributeSet) {
 
+    private var redrawNeeded: Boolean = false
     private var floorMap: Bitmap = drawable.toBitmap()
-    private lateinit var outputBitmap: Bitmap
     lateinit var pathEdgesSetter: PathEdgesSetter
     private val clickableAreas = ClickableAreasList()
 
     init {
         minZoom = 1f
-        maxZoom = 5f
+        maxZoom = 8f
         setZoom(1f)
         doubleTapScale = 1f
     }
 
     override fun onDraw(canvas: Canvas) {
 
-        outputBitmap = floorMap.copy(Bitmap.Config.ARGB_8888, true)
-
-        outputBitmap.applyCanvas {
-            clickableAreas.draw(this)
+        if (redrawNeeded) {
+            setImageBitmap(
+                floorMap.copy(Bitmap.Config.ARGB_8888, true).applyCanvas {
+                    clickableAreas.draw(this)
+                }
+            )
+            redrawNeeded = false
         }
 
-        setImageBitmap(outputBitmap)
-
         super.onDraw(canvas)
+    }
+
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+
+        println("mapView touch")
+
+        when(event?.actionMasked) {
+
+            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                checkClick(event.x, event.y)
+                performClick()
+            }
+
+        }
+
+        return super.onTouchEvent(event)
     }
 
     override fun performClick(): Boolean {
         return super.performClick()
     }
 
+    private fun redrawView(){
+        redrawNeeded = true
+        invalidate()
+    }
+
 
     fun updateFloor(floor: Floor) {
-        floorMap = ResourcesCompat.getDrawable(resources, floor.enum.resource, null)!!.toBitmap()
+        floorMap = ResourcesCompat.getDrawable(resources, floor.enum.resource, null)!!
+            .toBitmap()
+
+        println("W: ${floorMap.width}, H: ${floorMap.height}")
+
         clickableAreas.loadListOfAreas(
             floor.getClickableAreas(
                 context,
                 floorMap.width.toFloat(),
                 floorMap.height.toFloat(),
                 pathEdgesSetter,
-                { clickableAreas.unselectAll() }
+                { clickableAreas.unselectAll(); redrawView() }
             )
         )
 
-        invalidate()
+        redrawView()
     }
 
     fun checkClick(x: Float, y: Float) {
         val p = transformCoordTouchToBitmap(x, y, true)
         clickableAreas.checkClick(p)
-        invalidate()
+        redrawView()
     }
 
     private fun Floor.getClickableAreas (
@@ -92,6 +120,9 @@ class MapView(
         }
 
     private fun Floor.getSpecifiedCoordinates(p: PointF, mapWidth: Float, mapHeight: Float): PointF {
+
+        val bounds = enum.bounds
+
         val length = bounds.first
         val height = bounds.second
 

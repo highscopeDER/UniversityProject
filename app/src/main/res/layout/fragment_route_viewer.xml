@@ -24,7 +24,7 @@
           app:layout_constraintTop_toTopOf="parent"
           app:layout_constraintStart_toStartOf="parent"
           android:layout_margin="24dp"
-          android:foreground="@drawable/baseline_arrow_back_24"
+          android:foreground="@drawable/ic_arrow_back"
           android:background="#00000000"
           android:foregroundGravity="fill"
           />
@@ -87,7 +87,7 @@
              android:backgroundTint="#F7F2FA"
              android:elevation="2dp"
              app:iconTint="@color/black"
-             app:icon="@drawable/few"
+             app:icon="@drawable/ic_arrow_right"
              />
 
          <Button
@@ -103,7 +103,7 @@
              android:backgroundTint="#F7F2FA"
              android:elevation="2dp"
              app:iconTint="@color/black"
-             app:icon="@drawable/frame"
+             app:icon="@drawable/ic_arrow_left"
              />
 
          <TextView

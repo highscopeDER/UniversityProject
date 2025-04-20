@@ -2,7 +2,6 @@ package com.example.universityproject.screens.map
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
@@ -14,6 +13,7 @@ import androidx.core.graphics.applyCanvas
 import androidx.core.graphics.drawable.toBitmap
 import com.example.domain.models.FloorsEnum
 import com.example.domain.models.PointPosition
+import com.example.universityproject.model.bounds
 import com.example.universityproject.model.resource
 import com.ortiz.touchview.TouchImageView
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -34,34 +34,21 @@ class MapDrawnWithRoute(context: Context, attributeSet: AttributeSet) : TouchIma
     init {
         minZoom = 1f
         maxZoom = 5f
-        println("mapview init")
     }
-
-    override fun onDraw(canvas: Canvas) {
-
-
-
-        if (floorMap.value is FloorState.Floor ) {
-
-            val outputBitmap = (floorMap.value as FloorState.Floor).bitmap.copy(Bitmap.Config.ARGB_8888, true)
-
-            outputBitmap.applyCanvas {
-                drawPath(path, paint)
-            }
-
-            setImageBitmap(outputBitmap)
-
-        }
-
-        super.onDraw(canvas)
-    }
-
-
 
     fun updateFloor(floor: FloorsEnum, pathPoints: List<PointPosition>) {
-        floorMap.value = FloorState.Floor(ResourcesCompat.getDrawable(resources, floor.resource, null)!!.toBitmap())
+        floorMap.value = FloorState.Floor(
+            bitmap = ResourcesCompat.getDrawable(resources, floor.resource, null)!!.toBitmap(),
+            bounds = floor.bounds
+        )
         setupPath(pathPoints)
+        setImageBitmap(
+            ResourcesCompat.getDrawable(resources, floor.resource, null)!!.toBitmap().applyCanvas {
+                drawPath(path, paint)
+            },
+        )
         invalidate()
+        setZoom(pathBounds)
     }
 
     private fun setupPath(points: List<PointPosition>){
@@ -71,23 +58,24 @@ class MapDrawnWithRoute(context: Context, attributeSet: AttributeSet) : TouchIma
         path.apply {
             reset()
 
-            points.forEach { point ->
-                val p = point.getSpecifiedCoordinates(fm.getWidth(), fm.getHeight())
-                if (point == points.first()) {
-                    moveTo(p.x, p.y)
+            points.forEach {
+                it.getSpecifiedCoordinates(fm.getWidth(), fm.getHeight()).apply {
+                    if (it == points.first())  moveTo(this.x, this.y)
+                    lineTo(this.x, this.y)
                 }
-                lineTo(p.x, p.y)
             }
+
         }.computeBounds(pathBounds, true)
-        setZoom(pathBounds)
 
     }
 
     private fun PointPosition.getSpecifiedCoordinates(mapWidth: Float, mapHeight: Float): PointF {
-        val bounds = Pair(112.753f, 29.9f)
 
-        val length = bounds.first
-        val height = bounds.second
+        val fm = floorMap.value as FloorState.Floor
+
+
+        val length = fm.bounds.first
+        val height = fm.bounds.second
 
         val x_percent = x / length
         val y_percent = (height - y) / height
@@ -119,7 +107,7 @@ class MapDrawnWithRoute(context: Context, attributeSet: AttributeSet) : TouchIma
 
     sealed class FloorState{
         data object Empty: FloorState()
-        data class Floor(val bitmap: Bitmap): FloorState() {
+        data class Floor(val bitmap: Bitmap, val bounds: Pair<Float, Float>): FloorState() {
             fun getWidth(): Float = bitmap.width.toFloat()
             fun getHeight(): Float = bitmap.height.toFloat()
         }
