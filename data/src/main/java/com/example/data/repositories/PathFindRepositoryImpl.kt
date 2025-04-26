@@ -15,6 +15,10 @@ import com.example.domain.models.RoutePart
 import com.example.domain.models.RoutePoint
 import com.example.domain.models.alias.Points
 import com.example.domain.repositories.PathFindRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 
 class PathFindRepositoryImpl : PathFindRepository {
 
@@ -24,14 +28,18 @@ class PathFindRepositoryImpl : PathFindRepository {
         algorithm.buildGraph(p, d, c)
     }
 
-    override fun buildRoute(start: RoutePoint, end: RoutePoint): Route {
-        return Route(
-            splitPath(
-                algorithm.buildRoute(start.name, end.name),
-                start.label,
-                end.label
+    override suspend fun buildRoute(start: RoutePoint, end: RoutePoint): Flow<Route> {
+        return flow {
+            emit(
+                Route(
+                    splitPath(
+                        algorithm.buildRoute(start.name, end.name),
+                        start.label,
+                        end.label
+                    )
+                )
             )
-        )
+        }.flowOn(Dispatchers.IO)
     }
 
     private fun resolveFloorInfo(p: PointPosition): String {

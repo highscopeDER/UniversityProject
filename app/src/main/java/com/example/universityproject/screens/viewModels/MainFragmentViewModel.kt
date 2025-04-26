@@ -3,13 +3,11 @@ package com.example.universityproject.screens.viewModels
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavController
 import com.example.domain.models.Floor
 import com.example.domain.models.FloorsEnum
 import com.example.domain.models.Route
-import com.example.domain.models.alias.Floors
 import com.example.domain.models.RoutePoint
-import com.example.domain.repositories.ApiRepository
+import com.example.domain.models.alias.Floors
 import com.example.domain.usecases.LoadUseCase
 import com.example.domain.usecases.RequestRouteUseCase
 import com.example.universityproject.model.building
@@ -113,12 +111,20 @@ class MainFragmentViewModel @Inject constructor(
     }
 
     private fun navigateToRoute(){
-        val route = requestRouteUseCase.execute(startPoint.value!!, endPoint.value!!)
+
         viewModelScope.launch {
-            _navigateToRouteViewer.emit(route)
+            val savedFloorState: FloorState = _currentFloor.value
+            _currentFloor.value = FloorState.Loading
+            requestRouteUseCase.execute(startPoint.value!!, endPoint.value!!).collectLatest {
+                println(it)
+                _navigateToRouteViewer.emit(it)
+                _currentFloor.value = savedFloorState
+            }
+            _startPoint.value = null
+            _endPoint.value = null
+
         }
-        _startPoint.value = null
-        _endPoint.value = null
+
     }
 
     sealed class FloorState {

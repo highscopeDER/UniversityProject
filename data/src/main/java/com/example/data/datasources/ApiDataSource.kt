@@ -28,8 +28,9 @@ class ApiDataSource {
 
         private const val local = "http://10.0.2.2:8080"
         private const val network = "http://192.168.43.231:8080"
+        private const val network2 = "http://192.168.100.27:8080"
 
-        private const val base = local
+        private const val base = network
         const val DEFAULT = base
         const val CLASSROOMS = "$base/v2/allClassRooms"
         const val DATA = "$base/v2/data"

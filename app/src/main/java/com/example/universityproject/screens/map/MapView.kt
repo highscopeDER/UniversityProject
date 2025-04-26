@@ -5,7 +5,6 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.PointF
 import android.util.AttributeSet
-import android.view.MotionEvent
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.applyCanvas
 import androidx.core.graphics.drawable.toBitmap
@@ -46,22 +45,6 @@ class MapView(
         }
 
         super.onDraw(canvas)
-    }
-
-    override fun onTouchEvent(event: MotionEvent?): Boolean {
-
-        println("mapView touch")
-
-        when(event?.actionMasked) {
-
-            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
-                checkClick(event.x, event.y)
-                performClick()
-            }
-
-        }
-
-        return super.onTouchEvent(event)
     }
 
     override fun performClick(): Boolean {
