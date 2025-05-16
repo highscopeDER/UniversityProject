@@ -27,15 +27,15 @@ class ApiDataSource {
     private object Routes{
 
         private const val local = "http://10.0.2.2:8080"
-        private const val network = "http://192.168.43.231:8080"
+        private const val network = "http://79.137.192.148:8080"
         private const val network2 = "http://192.168.100.27:8080"
 
         private const val base = network
         const val DEFAULT = base
-        const val CLASSROOMS = "$base/v2/allClassRooms"
-        const val DATA = "$base/v2/data"
-        const val COORDINATES = "$base/v2/coordinates"
-        const val CLICKABLE_AREAS = "$base/v2/rooms"
+        const val CLASSROOMS = "$base/allClassRooms"
+        const val DATA = "$base/data"
+        const val COORDINATES = "$base/coordinates"
+        const val CLICKABLE_AREAS = "$base/rooms"
     }
 
 
