@@ -1,0 +1,33 @@
+package com.example.presentation.screens.map.clickable
+
+import android.graphics.Path
+import android.graphics.PointF
+import android.graphics.RectF
+import androidx.core.graphics.contains
+
+class ClickablePath(l: List<PointF>) : Path() {
+
+    val bounds = RectF()
+
+    init {
+        var first = true
+
+        l.forEach {
+            if (first) {
+                moveTo(it.x, it.y)
+            }
+            lineTo(it.x, it.y)
+            first = false
+        }
+
+        close()
+    }
+
+    fun contains(p: PointF) = bounds.contains(p)
+
+    override fun close() {
+        super.close()
+        computeBounds(bounds, true)
+    }
+
+}
