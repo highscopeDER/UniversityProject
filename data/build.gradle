@@ -1,11 +1,13 @@
 plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
+    id 'com.google.dagger.hilt.android' version "$daggerVersion"
 }
 
 android {
     namespace 'com.example.data'
-    compileSdk 34
+    compileSdk 35
 
     defaultConfig {
         minSdk 29
@@ -45,6 +47,9 @@ dependencies {
     implementation "io.ktor:ktor-client-serialization:$ktorClientVersion"
     implementation "io.ktor:ktor-client-content-negotiation:$ktorClientVersion"
     implementation "io.ktor:ktor-serialization-kotlinx-json:$ktorClientVersion"
+
+    implementation "com.google.dagger:hilt-android:$daggerVersion"
+    kapt "com.google.dagger:hilt-compiler:$daggerVersion"
 
 
 }

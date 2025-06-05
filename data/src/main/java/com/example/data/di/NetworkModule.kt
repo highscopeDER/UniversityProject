@@ -1,6 +1,5 @@
-package com.example.universityproject.di
+package com.example.data.di
 
-//import com.daakimov.data.ApiRepositoryImpl
 import com.example.data.repositories.ApiRepositoryImpl
 import com.example.data.repositories.PathFindRepositoryImpl
 import com.example.domain.repositories.ApiRepository

@@ -12,7 +12,6 @@ import com.example.domain.usecases.LoadUseCase
 import com.example.domain.usecases.RequestRouteUseCase
 import com.example.presentation.model.building
 import com.example.presentation.model.floor
-import com.example.presentation.screens.bottomsheet.mainBottomSheetFragment.MainBottomSheetFragment
 import com.example.presentation.screens.map.PathEdgesSetter
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow

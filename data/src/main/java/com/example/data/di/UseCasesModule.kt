@@ -1,4 +1,4 @@
-package com.example.universityproject.di
+package com.example.data.di
 
 import com.example.domain.repositories.ApiRepository
 import com.example.domain.repositories.PathFindRepository
