@@ -117,8 +117,6 @@ class MainFragment: BaseFragment(){
 
         binding.touchImageView.pathEdgesSetter = viewModel.pathEdgesSetter
 
-
-
         viewModel.navigateToRouteViewer.subscribe {
             findNavController().navigate(MainFragmentDirections.mainToRouteViewer(route = it.encodeToString()))
         }

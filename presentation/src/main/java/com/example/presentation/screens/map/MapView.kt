@@ -4,10 +4,14 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.PointF
+import android.graphics.drawable.VectorDrawable
 import android.util.AttributeSet
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.applyCanvas
 import androidx.core.graphics.drawable.toBitmap
+import androidx.core.graphics.withMatrix
+import androidx.core.graphics.withRotation
 import com.example.domain.models.Floor
 import com.example.presentation.model.bounds
 import com.example.presentation.model.resource
@@ -15,6 +19,7 @@ import com.example.presentation.screens.map.clickable.ClickableArea
 import com.example.presentation.screens.map.clickable.ClickableAreasList
 import com.example.presentation.screens.map.clickable.ClickablePath
 import com.ortiz.touchview.TouchImageView
+import java.util.Vector
 
 class MapView(
     context: Context,
@@ -23,6 +28,8 @@ class MapView(
 
     private var redrawNeeded: Boolean = false
     private var floorMap: Bitmap = drawable.toBitmap()
+    private var vector_floorMap: VectorDrawable = drawable as VectorDrawable
+
     lateinit var pathEdgesSetter: PathEdgesSetter
     private val clickableAreas = ClickableAreasList()
 
@@ -35,12 +42,22 @@ class MapView(
 
     override fun onDraw(canvas: Canvas) {
 
+
         if (redrawNeeded) {
-            setImageBitmap(
-                floorMap.copy(Bitmap.Config.ARGB_8888, true).applyCanvas {
-                    clickableAreas.draw(this)
-                }
-            )
+//            setImageBitmap(
+//                floorMap.copy(Bitmap.Config.ARGB_8888, true).applyCanvas {
+//                    clickableAreas.draw(this)
+//                }
+//            )
+
+            setImageDrawable(vector_floorMap)
+
+            canvas.withMatrix(matrix) {
+
+                clickableAreas.draw(this)
+            }
+
+
             redrawNeeded = false
         }
 
@@ -60,6 +77,8 @@ class MapView(
     fun updateFloor(floor: Floor) {
         floorMap = ResourcesCompat.getDrawable(resources, floor.enum.resource, null)!!
             .toBitmap()
+
+        vector_floorMap = AppCompatResources.getDrawable(this.context, floor.enum.resource) as VectorDrawable
 
         println("W: ${floorMap.width}, H: ${floorMap.height}")
 
