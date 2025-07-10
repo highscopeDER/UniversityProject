@@ -94,9 +94,14 @@ class VectorMap (context: Context, attributeSet: AttributeSet) : AppCompatImageV
 
     fun checkClick(x: Float, y: Float) {
         val p = PointF(x, y)
-        TODO("need to use view matrix to translate coord from screen dim to image dim")
-        println(p)
-        clickableAreas.checkClick(p)
+        val invertedMatrix: Matrix = Matrix()
+        viewMatrix.invert(invertedMatrix)
+
+        val newP = invertedMatrix.applyToPoint(p)
+
+        //TODO("need to use view matrix to translate coord from screen dim to image dim")
+        println(newP)
+        clickableAreas.checkClick(newP)
         redrawView()
     }
 
@@ -134,6 +139,13 @@ class VectorMap (context: Context, attributeSet: AttributeSet) : AppCompatImageV
             mapWidth * x_percent,
             mapHeight * y_percent
         )
+    }
+
+    private fun Matrix.applyToPoint(point: PointF): PointF {
+        val p0 = floatArrayOf(point.x, point.y)
+        val p1: FloatArray = floatArrayOf()
+        this.mapPoints(p1, p0)
+        return PointF(p1.first(), p1.last())
     }
 
 
