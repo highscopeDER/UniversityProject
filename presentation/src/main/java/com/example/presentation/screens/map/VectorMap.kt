@@ -18,7 +18,8 @@ import com.example.presentation.screens.map.clickable.ClickableArea
 import com.example.presentation.screens.map.clickable.ClickableAreasList
 import com.example.presentation.screens.map.clickable.ClickablePath
 
-class VectorMap (context: Context, attributeSet: AttributeSet) : AppCompatImageView(context, attributeSet) {
+class VectorMap(context: Context, attributeSet: AttributeSet) :
+    AppCompatImageView(context, attributeSet) {
 
     private var viewMatrix: Matrix = Matrix()
 
@@ -29,7 +30,7 @@ class VectorMap (context: Context, attributeSet: AttributeSet) : AppCompatImageV
 
     lateinit var pathEdgesSetter: PathEdgesSetter
     private val clickableAreas = ClickableAreasList()
-    
+
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
         super.onLayout(changed, left, top, right, bottom)
         viewBounds.left = left
@@ -37,7 +38,7 @@ class VectorMap (context: Context, attributeSet: AttributeSet) : AppCompatImageV
         viewBounds.right = right
         viewBounds.bottom = bottom
     }
-    
+
     override fun onDraw(canvas: Canvas) {
         if (redrawNeeded) {
 
@@ -58,14 +59,15 @@ class VectorMap (context: Context, attributeSet: AttributeSet) : AppCompatImageV
         return super.performClick()
     }
 
-    private fun redrawView(){
+    private fun redrawView() {
         redrawNeeded = true
         invalidate()
     }
 
 
     fun updateFloor(floor: Floor) {
-        floorMap = AppCompatResources.getDrawable(this.context, floor.enum.resource) as VectorDrawable
+        floorMap =
+            AppCompatResources.getDrawable(this.context, floor.enum.resource) as VectorDrawable
 
         floorMap!!.apply {
 
@@ -105,7 +107,7 @@ class VectorMap (context: Context, attributeSet: AttributeSet) : AppCompatImageV
         redrawView()
     }
 
-    private fun Floor.getClickableAreas (
+    private fun Floor.getClickableAreas(
         context: Context,
         mapWidth: Float,
         mapHeight: Float,
@@ -114,7 +116,14 @@ class VectorMap (context: Context, attributeSet: AttributeSet) : AppCompatImageV
     ): List<ClickableArea> =
         areasInfo.map {
             ClickableArea(
-                ClickablePath(it.points.map { p -> getSpecifiedCoordinates(PointF(p.first, p.second), mapWidth, mapHeight) }),
+                ClickablePath(it.points.map { p ->
+                    getSpecifiedCoordinates(
+                        PointF(
+                            p.first,
+                            p.second
+                        ), mapWidth, mapHeight
+                    )
+                }),
                 it.point,
                 it.icon,
                 context,
@@ -125,7 +134,11 @@ class VectorMap (context: Context, attributeSet: AttributeSet) : AppCompatImageV
             )
         }
 
-    private fun Floor.getSpecifiedCoordinates(p: PointF, mapWidth: Float, mapHeight: Float): PointF {
+    private fun Floor.getSpecifiedCoordinates(
+        p: PointF,
+        mapWidth: Float,
+        mapHeight: Float
+    ): PointF {
 
         val bounds = enum.bounds
 
