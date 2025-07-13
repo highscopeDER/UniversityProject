@@ -2,6 +2,7 @@ plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
     id 'org.jetbrains.kotlin.plugin.serialization' version "$kotlinSerializationPluginVersion"
+    id 'org.jetbrains.kotlin.plugin.compose' version "2.0.0"
     id 'kotlin-kapt'
     id 'com.google.dagger.hilt.android' version "$daggerVersion"
     id 'androidx.navigation.safeargs.kotlin'
@@ -86,7 +87,5 @@ dependencies {
 
     implementation 'androidx.compose.ui:ui-tooling-preview'
     debugImplementation 'androidx.compose.ui:ui-tooling'
-
-
 
 }
