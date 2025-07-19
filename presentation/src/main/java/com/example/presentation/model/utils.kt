@@ -97,16 +97,6 @@ val FloorsEnum.floor: String
 
         FloorsEnum.A6 -> "Этаж 6"
 
-
-
-
-
-
-
-
-
-
-
     }
 
 

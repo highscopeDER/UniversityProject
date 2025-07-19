@@ -22,11 +22,15 @@ import androidx.compose.ui.graphics.Matrix
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.vector.VectorPainter
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.toSize
 import com.example.presentation.R
+import kotlin.math.abs
 
 @Composable
 fun VectorComposeMap(
@@ -34,6 +38,8 @@ fun VectorComposeMap(
     img: ImageVector,
     clickableAreasList: ClickableAreasList
 ) {
+
+    val screenSize = LocalWindowInfo.current.containerSize.toSize()
 
     val matrixSaver: Saver<Matrix, Any> = listSaver<Matrix, Float>(
         save = { it.values.toList() },
@@ -45,22 +51,37 @@ fun VectorComposeMap(
         restore = { mutableStateOf(Offset(it.first(), it.last())) }
     )
 
+    val floorMap: VectorPainter = rememberVectorPainter(img)
+    val floorCenter: Offset = floorMap.intrinsicSize.center
 
-    val floorMap = rememberVectorPainter(img)
-    val floorCenter = floorMap.intrinsicSize.center
+    val minScale = 0.5f
+    val maxScale = 4f
+    val initialTranslation = -floorCenter + screenSize.center
 
-    var translation: Offset by rememberSaveable(saver = offsetSaver) { mutableStateOf(Offset.Zero) }
+    var translation: Offset by rememberSaveable(saver = offsetSaver) {
+        mutableStateOf(
+            initialTranslation
+        )
+    }
     var rotation: Float by rememberSaveable { mutableFloatStateOf(0f) }
-    var scale: Float by rememberSaveable { mutableFloatStateOf(1f) }
+    var scale: Float by rememberSaveable { mutableFloatStateOf(minScale) }
 
     val composeMatrix = rememberSaveable(saver = matrixSaver) { Matrix() }
 
     val state =
         rememberTransformableState { zoomChange: Float, panChange: Offset, rotationChange: Float ->
 
-            translation += panChange
-            scale *= zoomChange
-            rotation += rotationChange
+            val rightBottomTranslation = initialTranslation + floorCenter * scale
+            val leftTopTranslation = initialTranslation - floorCenter * scale
+
+            val newTrans = translation + panChange
+
+            translation = newTrans.adjustWithEdges(leftTopTranslation, rightBottomTranslation)
+
+            if (scale * zoomChange in minScale..maxScale)
+                scale *= zoomChange
+
+            rotation += rotationChange * 0.7f
 
         }
 
@@ -95,7 +116,7 @@ fun VectorComposeMap(
             with(floorMap) {
                 draw(floorMap.intrinsicSize)
             }
-            with(clickableAreasList){
+            with(clickableAreasList) {
                 draw(drawContext.canvas.nativeCanvas)
             }
         }
@@ -118,3 +139,35 @@ fun MapPreview() {
 
 fun Offset.toPointF(): PointF = PointF(this.x, this.y)
 
+fun Offset.adjustWithEdges(leftTop: Offset, rightBottom: Offset): Offset {
+
+    val xIsValid = this.x in leftTop.x..rightBottom.x
+    val yIsValid = this.y in leftTop.y..rightBottom.y
+
+    return when {
+        xIsValid && yIsValid -> this
+
+        xIsValid && !yIsValid -> this.copy(
+            y = if (
+                abs(this.y - leftTop.y) < abs(this.y - rightBottom.y)
+            ) leftTop.y else rightBottom.y
+        )
+
+        !xIsValid && yIsValid -> this.copy(
+            x = if (
+                abs(this.x - leftTop.x) < abs(this.x - rightBottom.x)
+            ) leftTop.x else rightBottom.x
+        )
+
+        else -> Offset(
+            x = if (
+                abs(this.x - leftTop.x) < abs(this.x - rightBottom.x)
+            ) leftTop.x else rightBottom.x,
+            y = if (
+                abs(this.y - leftTop.y) < abs(this.y - rightBottom.y)
+            ) leftTop.y else rightBottom.y
+        )
+    }
+
+
+}
