@@ -1,5 +1,6 @@
-package com.example.presentation.screens.viewModels
+package com.example.presentation.screens.compose.home
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,7 +13,6 @@ import com.example.domain.usecases.LoadUseCase
 import com.example.domain.usecases.RequestRouteUseCase
 import com.example.presentation.model.building
 import com.example.presentation.model.floor
-import com.example.presentation.screens.map.PathEdgesSetter
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,20 +24,23 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+// TODO: need to remake this viewmodel for home screen
+
 @HiltViewModel
-class MainFragmentViewModel @Inject constructor(
+class HomeScreenViewModel @Inject constructor(
     private val loadUseCase: LoadUseCase,
     private val requestRouteUseCase: RequestRouteUseCase
 ) : ViewModel() {
 
-    private val _navigateToRouteViewer = MutableSharedFlow<Route>()
-    val navigateToRouteViewer = _navigateToRouteViewer.asSharedFlow()
+
+    private val _uiState: MutableStateFlow<HomeScreenState> = MutableStateFlow(HomeScreenState.Loading)
+    val uiState = _uiState.asStateFlow()
 
     private val _startPoint: MutableStateFlow<RoutePoint?> = MutableStateFlow(null)
     private val _endPoint: MutableStateFlow<RoutePoint?> = MutableStateFlow(null)
 
-    val startPoint = _startPoint.asStateFlow()
-    val endPoint = _endPoint.asStateFlow()
+    private val startPoint = _startPoint.asStateFlow()
+    private val endPoint = _endPoint.asStateFlow()
 
     private val _floors = MutableStateFlow(Floors(emptyMap()))
     private val floors: StateFlow<Floors> = _floors.asStateFlow()
@@ -69,10 +72,10 @@ class MainFragmentViewModel @Inject constructor(
     private val _popUpMenu = MutableSharedFlow<String>()
     val popUpMenu = _popUpMenu.asSharedFlow()
 
-    val pathEdgesSetter = PathEdgesSetter(
-        {_startPoint.value = it},
-        {_endPoint.value = it}
-    )
+//    val pathEdgesSetter = PathEdgesSetter(
+//        {_startPoint.value = it},
+//        {_endPoint.value = it}
+//    )
 
     fun loadFloors(){
         viewModelScope.launch {
@@ -98,10 +101,7 @@ class MainFragmentViewModel @Inject constructor(
     }
 
     fun showBottomSheet(fm: FragmentManager, start: Boolean){
-        com.example.presentation.screens.bottomsheet.mainBottomSheetFragment.MainBottomSheetFragment(
-            start,
-            classrooms.value
-        ).show(fm, null)
+
     }
 
     fun setStartPoint(p: RoutePoint) {
@@ -119,7 +119,7 @@ class MainFragmentViewModel @Inject constructor(
             _currentFloor.value = FloorState.Loading
             requestRouteUseCase.execute(startPoint.value!!, endPoint.value!!).collectLatest {
                 println(it)
-                _navigateToRouteViewer.emit(it)
+                //_navigateToRouteViewer.emit(it)
                 _currentFloor.value = savedFloorState
             }
             _startPoint.value = null

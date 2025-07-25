@@ -1,19 +1,19 @@
-package com.example.presentation.screens.map.clickable
+package com.example.presentation.core.components.map.models
 
-import android.graphics.Canvas
-import android.graphics.PointF
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.drawscope.DrawScope
 
 class ClickableAreasList {
 
     private val list: MutableList<ClickableArea> = mutableListOf()
 
-    fun draw(canvas: Canvas){
+    fun DrawScope.draw(){
         list.forEach {
-            it.dispatchDrawing(canvas)
+            it.draw(this)
         }
     }
 
-    fun checkClick(p: PointF) {
+    fun checkClick(p: Offset) {
         list.forEach {
             it.checkIfClicked(p)
         }

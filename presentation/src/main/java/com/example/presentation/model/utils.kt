@@ -1,7 +1,16 @@
 package com.example.presentation.model
 
+import android.graphics.PointF
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
+import com.example.domain.models.Floor
 import com.example.domain.models.FloorsEnum
 import com.example.presentation.R
+import com.example.presentation.core.components.map.models.ClickableArea
+import com.example.presentation.core.components.map.models.createFromPointsList
 
 val FloorsEnum.resource: Int
     get() = when(this) {
@@ -98,6 +107,7 @@ val FloorsEnum.floor: String
         FloorsEnum.A6 -> "Этаж 6"
 
     }
+
 
 
 

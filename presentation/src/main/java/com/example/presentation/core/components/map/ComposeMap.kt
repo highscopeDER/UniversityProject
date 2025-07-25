@@ -1,4 +1,4 @@
-package com.example.presentation.screens.map.clickable
+package com.example.presentation.core.components.map
 
 import android.graphics.PointF
 import androidx.compose.foundation.Canvas
@@ -30,6 +30,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.toSize
 import com.example.presentation.R
+import com.example.presentation.core.components.map.models.ClickableAreasList
 import kotlin.math.abs
 
 @Composable
@@ -97,7 +98,7 @@ fun VectorComposeMap(
                     println("object ---> x: ${objectOffset.x}")
                     println("object ---> y: ${objectOffset.y}")
                     composeMatrix.invert()
-                    clickableAreasList.checkClick(objectOffset.toPointF())
+                    clickableAreasList.checkClick(objectOffset)
                 }
             }
     ) {
@@ -117,7 +118,7 @@ fun VectorComposeMap(
                 draw(floorMap.intrinsicSize)
             }
             with(clickableAreasList) {
-                draw(drawContext.canvas.nativeCanvas)
+                draw()
             }
         }
 
