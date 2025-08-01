@@ -19,18 +19,19 @@ fun AppNavHost(
     NavHost(
         navController = navController,
         modifier = modifier,
-        startDestination = HomeScreenDestination
+        startDestination = HomeScreenDestination.toString()
     ) {
 
-        composable<HomeScreenDestination> {
+
+        composable(HomeScreenDestination.toString()) {
             HomeScreen(
                 navigateToRouteDetails = {
-                    navController.navigate(route = RouteDetailsScreenDestination)
+                    navController.navigate(route = RouteDetailsScreenDestination.toString())
                 }
             )
         }
 
-        composable<RouteDetailsScreenDestination> {
+        composable(RouteDetailsScreenDestination.toString()) {
             RouteDetailsScreen(
                 navigateToHome = { navController.popBackStack() }
             )

@@ -1,12 +1,11 @@
 package com.example.presentation.screens.compose.home
 
-import androidx.compose.runtime.mutableStateOf
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModel
+
 import androidx.lifecycle.viewModelScope
 import com.example.domain.models.Floor
 import com.example.domain.models.FloorsEnum
-import com.example.domain.models.Route
 import com.example.domain.models.RoutePoint
 import com.example.domain.models.alias.Floors
 import com.example.domain.usecases.LoadUseCase
@@ -36,104 +35,51 @@ class HomeScreenViewModel @Inject constructor(
     private val _uiState: MutableStateFlow<HomeScreenState> = MutableStateFlow(HomeScreenState.Loading)
     val uiState = _uiState.asStateFlow()
 
-    private val _startPoint: MutableStateFlow<RoutePoint?> = MutableStateFlow(null)
-    private val _endPoint: MutableStateFlow<RoutePoint?> = MutableStateFlow(null)
+    private val classrooms = MutableStateFlow<List<RoutePoint>>(emptyList())
 
-    private val startPoint = _startPoint.asStateFlow()
-    private val endPoint = _endPoint.asStateFlow()
+    private val floors = MutableStateFlow(Floors(emptyMap()))
 
-    private val _floors = MutableStateFlow(Floors(emptyMap()))
-    private val floors: StateFlow<Floors> = _floors.asStateFlow()
-
-    private val _classrooms = MutableStateFlow<List<RoutePoint>>(emptyList())
-    private val classrooms: StateFlow<List<RoutePoint>> = _classrooms.asStateFlow()
-
-
-    init {
-
-        viewModelScope.launch {
-            combine(startPoint, endPoint) { s, e ->
-               s != null && e != null
-            }.collectLatest {
-                if (it) navigateToRoute()
-            }
-        }
-
-    }
-
-    private val _currentFloor: MutableStateFlow<FloorState> = MutableStateFlow(FloorState.Empty)
-    private val _currentFloorText: MutableStateFlow<String> = MutableStateFlow("Этаж 1")
-    private val _currentBuildingText: MutableStateFlow<String> = MutableStateFlow("Корпус 1")
-
-    val currentFloor = _currentFloor.asStateFlow()
-    val currentFloorText = _currentFloorText.asStateFlow()
-    val currentBuildingText = _currentBuildingText.asStateFlow()
-
-    private val _popUpMenu = MutableSharedFlow<String>()
-    val popUpMenu = _popUpMenu.asSharedFlow()
-
-//    val pathEdgesSetter = PathEdgesSetter(
-//        {_startPoint.value = it},
-//        {_endPoint.value = it}
-//    )
 
     fun loadFloors(){
         viewModelScope.launch {
-            _currentFloor.value = FloorState.Loading
+
+            _uiState.value = HomeScreenState.Loading
             loadUseCase.execute().collectLatest {
-                _floors.value = it.floors
-                _classrooms.value = it.classrooms
-                setFloor(it.floors.map.keys.first())
+                floors.value = it.floors
+                classrooms.value = it.classrooms
+                _uiState.value = HomeScreenState.ShowingFloor(
+                    edges = RouteEdges(null, null),
+                    floor = it.floors.map.entries.first().value
+                )
             }
         }
     }
 
-    fun showPopUpMenu(){
-        viewModelScope.launch {
-            _popUpMenu.emit("")
-        }
-    }
-
-    fun setFloor(num: FloorsEnum) {
-        _currentFloor.value = FloorState.Showing(floors.value.getFloor(num))
-        _currentFloorText.value = num.floor
-        _currentBuildingText.value = num.building
-    }
-
-    fun showBottomSheet(fm: FragmentManager, start: Boolean){
-
-    }
-
-    fun setStartPoint(p: RoutePoint) {
-        _startPoint.value = p
-    }
-
-    fun setEndPoint(p: RoutePoint) {
-        _endPoint.value = p
-    }
-
-    private fun navigateToRoute(){
-
-        viewModelScope.launch {
-            val savedFloorState: FloorState = _currentFloor.value
-            _currentFloor.value = FloorState.Loading
-            requestRouteUseCase.execute(startPoint.value!!, endPoint.value!!).collectLatest {
-                println(it)
-                //_navigateToRouteViewer.emit(it)
-                _currentFloor.value = savedFloorState
+    fun setRouteStart(routePoint: RoutePoint) {
+        if (uiState.value is HomeScreenState.ShowingFloor) {
+            with(uiState.value as HomeScreenState.ShowingFloor) {
+                _uiState.value = copy(
+                    edges = edges.copy(
+                        start = routePoint
+                    )
+                )
             }
-            _startPoint.value = null
-            _endPoint.value = null
-
         }
-
     }
 
-    sealed class FloorState {
-        data object Empty : FloorState()
-        data object Loading: FloorState()
-        data class Error(val msg: String) : FloorState()
-        data class Showing(val floor: Floor): FloorState()
+    fun setRouteEnd(routePoint: RoutePoint) {
+        if (uiState.value is HomeScreenState.ShowingFloor) {
+            with(uiState.value as HomeScreenState.ShowingFloor) {
+                _uiState.value = copy(
+                    edges = edges.copy(
+                        end = routePoint
+                    )
+                )
+            }
+        }
     }
+
+
+
 
 }

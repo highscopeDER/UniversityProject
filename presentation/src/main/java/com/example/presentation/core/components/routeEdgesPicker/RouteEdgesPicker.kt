@@ -8,13 +8,15 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
-import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.presentation.core.theme.Gray40
@@ -28,28 +30,31 @@ fun RouteEdgesPicker(
     //TODO(): need to hoist it's state
 
     Row(
-        modifier = modifier.background(Gray40).padding(top = 16.dp),
+        modifier = modifier
+            .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
+            .background(Gray40)
+            .padding(top = 24.dp),
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
 
         PickEdgeButton(
-            Modifier.fillMaxHeight(0.3f).aspectRatio(3f),
-            "Откуда",
-            null,
-            {},
-            {}
+            modifier = Modifier.size(160.dp, 40.dp),
+            hint ="Откуда",
+            selectedEdge = null,
+            onClear = {},
+            onClick = {}
         )
 
         PickEdgeButton(
-            Modifier.fillMaxHeight(0.3f).aspectRatio(3f),
-            "Куда",
-            null,
-            {},
-            {}
+            modifier = Modifier.size(160.dp, 40.dp),
+            hint ="Куда",
+            selectedEdge = null,
+            onClear = {},
+            onClick = {}
         )
         
         Button(
-            modifier = Modifier.fillMaxHeight(0.3f).aspectRatio(1f),
+            modifier = Modifier.size(40.dp, 40.dp),
             onClick = {}
         ) {
 
@@ -72,7 +77,7 @@ fun RouteEdgesPickerPreview(){
             RouteEdgesPicker(
                 Modifier
                     .fillMaxWidth()
-                    .fillMaxHeight(0.2f),
+                    .fillMaxHeight(0.15f),
             )
 
         }
