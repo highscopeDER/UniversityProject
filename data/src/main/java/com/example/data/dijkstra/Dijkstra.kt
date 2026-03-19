@@ -3,6 +3,7 @@ package com.example.data.dijkstra
 import com.example.domain.models.alias.GraphData
 import com.example.domain.models.PointPosition
 import com.example.domain.models.alias.Points
+import kotlin.math.abs
 import kotlin.math.pow
 import kotlin.math.sqrt
 
@@ -72,7 +73,7 @@ class Dijkstra () {
         val weights: MutableMap<Pair<String, String>, Float> = mutableMapOf()
 
         data.forEach {
-
+            val flnum = it.key[1]
             val firstPoint = coordinates[it.key]
             it.value.forEach { item ->
                 val secondPoint = coordinates[item]
@@ -82,7 +83,7 @@ class Dijkstra () {
                     (secondPoint!!.first - firstPoint!!.first).pow(2)
                             +
                             (secondPoint.second - firstPoint.second).pow(2)
-                )
+                ) + abs(flnum - item[1])*10
 
                 weights[a] = b
             }
@@ -96,16 +97,11 @@ class Dijkstra () {
         val s = pointsList[startPoint]
         val e = pointsList[endPoint]
 
-        var path: List<String> = useDijkstra(
+        val path: List<String> = useDijkstra(
             graph,
             startPoint,
             endPoint
         )
-
-        if (path.first() != s || path.last() != e) {
-            path = useDijkstra(graph, endPoint, startPoint)
-            path = path.reversed()
-        }
 
         println(path)
 
